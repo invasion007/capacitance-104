@@ -1568,7 +1568,22 @@
     } else {
       seg(ctx, X(AX - AW), Y(AY1), X(240), Y(AY1));
       text(ctx, 'S₁ 断开（A 悬空）', X(236), Y(AY1) - 18, { color: THEME.grey, size: 12 * f, align: 'right' });
-      text(ctx, '电荷留在极板上，没有回路可以跑', X(BX), Y(AY1) + 16, { color: THEME.grey, size: 12 * f, align: 'center' });
+      text(ctx, 'A 悬空：电荷留在极板上', X(AX - 30), Y(272),
+        { color: THEME.grey, size: 12 * f, align: 'center' });
+      /* B 仍然画出来（灰），并用闭合的 S₂ 表示"正在放干净" */
+      stroke(ctx, THEME.grey, 3.5);
+      seg(ctx, X(BX - AW), Y(AY1), X(BX + AW), Y(AY1));
+      seg(ctx, X(BX - AW), Y(AY2), X(BX + AW), Y(AY2));
+      text(ctx, 'B（已放干净）', X(BX), Y(AY1) - 20, { color: THEME.grey, size: 12 * f, align: 'center' });
+      seg(ctx, X(BX - AW), Y(AY2), X(500), Y(AY2));
+      seg(ctx, X(500), Y(AY2), X(500), Y(250));
+      seg(ctx, X(420), Y(250), X(500), Y(250));
+      seg(ctx, X(BX + AW), Y(AY1), X(740), Y(AY1));
+      seg(ctx, X(740), Y(AY1), X(740), Y(AY2));
+      seg(ctx, X(740), Y(AY2), X(BX + AW), Y(AY2));
+      stroke(ctx, THEME.green, 2.4);
+      seg(ctx, X(740) - 5, Y((AY1 + AY2) / 2), X(740) + 5, Y((AY1 + AY2) / 2));
+      text(ctx, 'S₂ 闭合：B 放电到 0', X(BX + 40), Y(272), { color: THEME.green, size: 12 * f, align: 'center' });
     }
 
     /* ---- 一句话 ---- */
