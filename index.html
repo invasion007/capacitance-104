@@ -1,0 +1,3389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10.4 电容器的电容 · 可交互课件</title>
+<style>
+  :root{
+    /* 配色基准：原版 Manim —— 纯黑底 + 白线为主 + Manim 官方色常量
+       黄=C（本课主角量）｜金=Q/电荷/水｜绿=U/水位｜红蓝=正负｜紫=辅助 */
+    --bg:#000000; --bg2:#0a0a0a; --panel:#0e0e0e; --line:#242424; --line2:#383838;
+    --ink:#FFFFFF; --ink2:#B0B0B0; --muted:#888888;
+    --pos:#FC6255; --neg:#58C4DD;
+    --yellow:#FFFF00; --gold:#F0AC5F; --green:#83C167; --purple:#9A72AC;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC","WenQuanYi Zen Hei",sans-serif;
+    overflow:hidden;
+  }
+  .app{display:grid; grid-template-rows:auto auto 1fr auto auto; height:100vh;}
+
+  header{display:flex; align-items:baseline; gap:14px; padding:10px 18px 8px; flex-wrap:wrap; row-gap:3px;
+    background:var(--bg2); border-bottom:1px solid var(--line);}
+  header h1{font-size:16px; margin:0; font-weight:600; letter-spacing:.5px; white-space:nowrap;}
+  .act{font-size:13px; color:var(--yellow); border:1px solid var(--line2); border-radius:10px;
+    padding:1px 9px; white-space:nowrap;}
+  .steptitle{font-size:15px; color:var(--ink); font-weight:600;}
+  .stepsn{margin-left:auto; font-size:13px; color:var(--ink2); font-variant-numeric:tabular-nums;}
+
+  .stage{display:grid; grid-template-columns:1fr 274px; grid-template-rows:minmax(0,1fr); min-height:0;}
+
+  .topnav{display:flex; align-items:center; gap:5px; padding:5px 14px 6px;
+    background:var(--bg2); border-bottom:1px solid var(--line); overflow-x:auto; overflow-y:hidden;}
+  .topnav .grouplab{flex:0 0 auto; font-size:11px; letter-spacing:.6px; color:var(--muted); font-weight:600; white-space:nowrap;}
+  .topnav .sep{flex:0 0 auto; width:1px; height:15px; background:var(--line2); margin:0 5px;}
+  .topnav a{flex:0 0 auto; min-width:27px; height:22px; padding:0 7px; display:inline-flex; align-items:center; justify-content:center;
+    font-size:12px; font-variant-numeric:tabular-nums; color:var(--ink2); background:#141414;
+    border:1px solid var(--line2); border-radius:6px; cursor:pointer;}
+  .topnav a:hover{background:#1e1e1e; color:var(--ink);}
+  .topnav a.on{background:rgba(255,255,0,0.12); border-color:var(--yellow); color:var(--yellow); font-weight:700;}
+  .canvaswrap{position:relative; min-width:0; min-height:0; padding:6px 8px 0 8px; overflow:hidden;}
+  canvas{display:block; position:absolute; left:8px; top:6px; width:calc(100% - 16px); height:calc(100% - 6px);}
+  .hint{padding:7px 20px 0 20px; font-size:12.5px; color:var(--muted); height:38px; overflow:hidden;}
+  .hint b{color:var(--yellow); font-weight:600;}
+
+  aside{background:var(--panel); border-left:1px solid var(--line); padding:10px 12px 14px; overflow-y:auto; min-height:0;}
+  aside h3{font-size:12px; color:var(--muted); margin:14px 0 6px; font-weight:600; letter-spacing:.5px;}
+  aside h3:first-child{margin-top:2px;}
+  .rd{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:3px 0;
+    font-size:12.5px; color:var(--ink2); border-bottom:1px dashed #242424;}
+  .rd span{white-space:nowrap;}
+  .rd b{font-size:14.5px; color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .rd b.yellow{color:var(--yellow);}
+  .rd b.gold{color:var(--gold);}
+  .rd b.green{color:var(--green);}
+  .rd b.purple{color:var(--purple);}
+  .rd b.pos{color:var(--pos);}
+  .rd b.neg{color:var(--neg);}
+  .formula{font-size:13.5px; color:var(--ink); background:#141414; border:1px solid var(--line2);
+    border-radius:8px; padding:8px 10px; line-height:1.5; word-break:break-word;}
+  .note{font-size:12.5px; color:var(--ink2); line-height:1.62;}
+  .note b{color:var(--yellow); font-weight:600;}
+  .grp{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .grp .lab{font-size:12.5px; color:var(--muted);}
+  button{font-family:inherit; font-size:12.5px; color:var(--ink2); background:#141414;
+    border:1px solid var(--line2); border-radius:6px; padding:5px 10px; cursor:pointer; white-space:nowrap;}
+  button:hover{background:#1e1e1e; color:var(--ink);}
+  button.on{background:rgba(255,255,0,0.12); border-color:var(--yellow); color:var(--yellow); font-weight:700;}
+  button.main{background:#1a1a1a; color:var(--ink);}
+
+  footer{display:flex; align-items:center; gap:8px; flex-wrap:wrap; row-gap:6px;
+    padding:8px 14px 9px; background:var(--bg2); border-top:1px solid var(--line);}
+  .bar{position:relative; flex:1 1 130px; min-width:100px; height:6px; background:#141414; border-radius:3px; cursor:pointer;}
+  .bar i{display:block; height:100%; width:0; background:var(--yellow); border-radius:3px;}
+  .bar u{position:absolute; top:-2px; width:1px; height:10px; background:#4a4a4a;}
+  .slider{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted);}
+  .slider input[type=range]{width:92px; accent-color:#4a4a4a;}
+  .slider b{color:var(--ink); font-variant-numeric:tabular-nums; min-width:44px; text-align:right;}
+  .hidden{display:none !important;}
+
+  @media (max-width: 760px){
+    .stage{grid-template-columns:1fr;}
+    aside{border-left:none; border-top:1px solid var(--line); max-height:30vh;}
+    .hint{height:44px; font-size:12px; line-height:1.35;}
+    header h1{font-size:14px;}
+    .steptitle{font-size:13px;}
+    .slider input[type=range]{width:70px;}
+    /* 窄屏：控件区高度固定，画布尺寸不随每一步的控件多少而变（翻页前后像素指纹才稳定） */
+    footer{height:118px; overflow-y:auto; align-content:flex-start;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>10.4 电容器的电容</h1>
+    <span class="act" id="actTag">第一幕</span>
+    <span class="steptitle" id="stepTitle">—</span>
+    <span class="stepsn" id="stepSn">1 / 24</span>
+  </header>
+
+  <nav class="topnav" id="toc" aria-label="步骤导航"></nav>
+
+  <div class="stage">
+    <div class="canvaswrap">
+      <canvas id="cv"></canvas>
+    </div>
+    <aside>
+      <h3>本步读数</h3>
+
+      <div id="gModel">
+        <div class="rd"><span>拆开程度</span><b id="rdUnfold">0%</b></div>
+        <div class="rd"><span>两导体间距 d</span><b class="green" id="rdMd">10 mm</b></div>
+        <div class="rd"><span>估算电容 C（S = 0.02 m²）</span><b class="yellow" id="rdMC">—</b></div>
+      </div>
+
+      <div id="gCircuit" class="hidden">
+        <div class="rd"><span>开关 S</span><b id="rdSw">接 1（充电）</b></div>
+        <div class="rd"><span>时刻 t</span><b id="rdT">0.00 s</b></div>
+        <div class="rd"><span>电压表读数 U</span><b class="green" id="rdU">—</b></div>
+        <div class="rd"><span>电流计读数 I</span><b class="gold" id="rdI">—</b></div>
+        <div class="rd"><span>电荷量 Q = CU</span><b class="gold" id="rdQ">—</b></div>
+        <div class="rd"><span>时间常数 τ</span><b id="rdTau">1.10 s</b></div>
+        <div class="rd"><span>电流计量程 ±300 µA</span><b id="rdIg">在 ±300 µA 内</b></div>
+        <div class="rd"><span>电压表内阻</span><b id="rdVm">数字表 100 MΩ</b></div>
+      </div>
+
+      <div id="gSharing" class="hidden">
+        <div class="rd"><span>平分次数</span><b id="rdN">0 次</b></div>
+        <div class="rd"><span>A 上电荷量</span><b class="gold" id="rdQa">Q</b></div>
+        <div class="rd"><span>A 上电荷量（值）</span><b class="gold" id="rdQa2">—</b></div>
+        <div class="rd"><span>B 上电荷量（值）</span><b class="gold" id="rdQb2">—</b></div>
+        <div class="rd"><span>电压表读数</span><b class="green" id="rdUs">—</b></div>
+        <div class="rd"><span>Q/U</span><b class="yellow" id="rdQu">—</b></div>
+      </div>
+
+      <div id="gQu" class="hidden">
+        <div class="rd"><span>电容器</span><b id="rdCap">2200 µF</b></div>
+        <div class="rd"><span>电压 U</span><b class="green" id="rdQu2">1.00 V</b></div>
+        <div class="rd"><span>电荷量 Q = CU</span><b class="gold" id="rdQq">—</b></div>
+        <div class="rd"><span>图线斜率 = C</span><b class="yellow" id="rdSlope">—</b></div>
+      </div>
+
+      <div id="gPlate" class="hidden">
+        <div class="rd"><span>板距 d</span><b class="green" id="rdPd">4.0 mm</b></div>
+        <div class="rd"><span>正对面积 S</span><b class="green" id="rdPs">100%</b></div>
+        <div class="rd"><span>电介质 εr</span><b id="rdPe">1.0</b></div>
+        <div class="rd"><span>电容 C</span><b class="yellow" id="rdPc">—</b></div>
+        <div class="rd"><span>教材路线大平行板</span><b id="rdPbig">—</b></div>
+      </div>
+
+      <div id="gIt" class="hidden">
+        <div class="rd"><span>分段数 N</span><b id="rdItN">12 段</b></div>
+        <div class="rd"><span>取点方式</span><b id="rdItMode">中点</b></div>
+        <div class="rd"><span>矩形面积和 Σ</span><b class="gold" id="rdItSum">—</b></div>
+        <div class="rd"><span>真实电荷量 CU₀</span><b class="green" id="rdItExact">—</b></div>
+        <div class="rd"><span>相对误差</span><b class="yellow" id="rdItErr">—</b></div>
+      </div>
+
+      <div id="gDefn" class="hidden">
+        <div class="rd"><span>刻度（水深 / 电压）</span><b class="green" id="rdDh">1.00</b></div>
+        <div class="rd"><span>三个容器的底面积比</span><b id="rdDw">—</b></div>
+        <div class="rd"><span>你的投票</span><b class="yellow" id="rdDc">未投票</b></div>
+      </div>
+
+      <div id="gSafety" class="hidden">
+        <div class="rd"><span>加在电容器上的电压</span><b class="green" id="rdSv">30 V</b></div>
+        <div class="rd"><span>状态</span><b class="green" id="rdSs">安全</b></div>
+        <div class="rd"><span>额定电压（外壳标注）</span><b id="rdSr">50 V</b></div>
+        <div class="rd"><span>击穿电压</span><b class="pos" id="rdSb">60 V</b></div>
+      </div>
+
+      <div id="gApps" class="hidden">
+        <div class="rd"><span>动片转角 θ</span><b class="green" id="rdAt">0°</b></div>
+        <div class="rd"><span>正对面积</span><b class="gold" id="rdAs">100%</b></div>
+        <div class="rd"><span>电容 C</span><b class="yellow" id="rdAc">—</b></div>
+      </div>
+
+      <div id="gPrac" class="hidden">
+        <div class="rd"><span>当前题目</span><b id="rdPr">第 2 题</b></div>
+        <div class="rd"><span>选择 / 电压</span><b class="green" id="rdPv">—</b></div>
+        <div class="rd"><span>电容 C</span><b class="yellow" id="rdPc2">—</b></div>
+        <div class="rd"><span>电荷量 Q</span><b class="gold" id="rdPq">—</b></div>
+      </div>
+
+      <h3>这一刻的公式</h3>
+      <div class="formula" id="rdFormula">—</div>
+
+      <h3>提示</h3>
+      <div class="note" id="rdNote"></div>
+
+      <h3>怎么用</h3>
+      <div class="note">
+        画布上能拖的东西会变成<b style="color:var(--yellow)">抓手</b>；<b style="color:var(--yellow)">双击画布</b>等于"复位本步"。
+        键盘 <b style="color:var(--yellow)">← →</b> 翻页、<b style="color:var(--yellow)">Home</b> 回第一步；顶部数字条可直接跳步。
+      </div>
+    </aside>
+  </div>
+
+  <div class="hint" id="hint"></div>
+
+  <footer>
+    <button id="btnPrev">◀ 上一步</button>
+    <button id="btnNext" class="main">下一步 ▶</button>
+    <button id="btnReset">↺ 复位本步</button>
+    <div class="bar" id="prog"><i></i></div>
+
+    <div class="slider" id="wrapUnfold">
+      <span>拆开</span><input type="range" id="rgUnfold" min="0" max="100" step="1" value="0"><b id="lbUnfold">0%</b>
+    </div>
+    <div class="slider" id="wrapD">
+      <span>板距 d</span><input type="range" id="rgD" min="1" max="20" step="1" value="10"><b id="lbD">10 mm</b>
+    </div>
+    <div class="slider" id="wrapS">
+      <span>正对面积 S</span><input type="range" id="rgS" min="5" max="100" step="1" value="100"><b id="lbS">100%</b>
+    </div>
+    <div class="grp" id="wrapER">
+      <span class="lab">电介质</span>
+      <button data-er="1">空气</button>
+      <button data-er="2.3">聚乙烯</button>
+      <button data-er="3.2">PVC</button>
+    </div>
+    <div class="slider" id="wrapTheta">
+      <span>动片转角</span><input type="range" id="rgTheta" min="0" max="180" step="1" value="0"><b id="lbTheta">0°</b>
+    </div>
+    <div class="grp" id="wrapSw">
+      <span class="lab">开关 S</span>
+      <button data-sw="1">接 1（充电）</button>
+      <button data-sw="0">断开</button>
+      <button data-sw="2">接 2（放电）</button>
+    </div>
+    <div class="slider" id="wrapT">
+      <span>时刻 t</span><input type="range" id="rgT" min="0" max="800" step="1" value="0"><b id="lbT">0.00 s</b>
+    </div>
+    <div class="slider" id="wrapU0">
+      <span>电源电压</span><input type="range" id="rgU0" min="1" max="3" step="0.5" value="1.5"><b id="lbU0">1.5 V</b>
+    </div>
+    <div class="grp" id="wrapVM">
+      <span class="lab">电压表</span>
+      <button data-vm="digital">数字表 100 MΩ</button>
+      <button data-vm="student">学生表 3 kΩ</button>
+    </div>
+    <div class="grp" id="wrapOp">
+      <span class="lab">操作</span>
+      <button data-op="charge">给 A 充电</button>
+      <button data-op="share">A‖B 平分</button>
+      <button data-op="disb">给 B 放电</button>
+    </div>
+    <div class="grp" id="wrapCap">
+      <span class="lab">电容器</span>
+      <button data-cap="0">200 µF</button>
+      <button data-cap="1">1000 µF</button>
+      <button data-cap="2">2200 µF</button>
+    </div>
+    <div class="slider" id="wrapU">
+      <span>电压 U</span><input type="range" id="rgU" min="0" max="3" step="0.05" value="1"><b id="lbU">1.00 V</b>
+    </div>
+    <div class="slider" id="wrapN">
+      <span>分段数 N</span><input type="range" id="rgN" min="1" max="40" step="1" value="12"><b id="lbN">12 段</b>
+    </div>
+    <div class="grp" id="wrapMode">
+      <span class="lab">取点方式</span>
+      <button data-mode="left">左端</button>
+      <button data-mode="mid">中点</button>
+      <button data-mode="right">右端</button>
+    </div>
+    <div class="grp" id="wrapVote">
+      <span class="lab">投票</span>
+      <button data-vote="QU">用 Q/U 定义</button>
+      <button data-vote="UQ">用 U/Q 定义</button>
+    </div>
+    <div class="slider" id="wrapH">
+      <span>水深 / 电压</span><input type="range" id="rgH" min="20" max="200" step="1" value="100"><b id="lbH">1.00</b>
+    </div>
+    <div class="slider" id="wrapUv">
+      <span>加在电容器上的电压</span><input type="range" id="rgUv" min="0" max="80" step="1" value="30"><b id="lbUv">30 V</b>
+    </div>
+    <div class="grp" id="wrapPrac">
+      <span class="lab">题目</span>
+      <button data-prac="table">第1题</button>
+      <button data-prac="graphs">第2题</button>
+      <button data-prac="calc">第3题</button>
+      <button data-prac="defib">第4题</button>
+    </div>
+    <div class="grp" id="wrapPick">
+      <span class="lab">时刻</span>
+      <button data-pick="t1">t₁</button>
+      <button data-pick="t2">t₂</button>
+    </div>
+    <div class="grp" id="wrapGraph">
+      <span class="lab">选图</span>
+      <button data-graph="A">A</button>
+      <button data-graph="B">B</button>
+      <button data-graph="C">C</button>
+      <button data-graph="D">D</button>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* =====================================================================
+   viz_ca_physics.js —— 纯物理内核（不依赖 DOM，可在 node 里直接跑自检）
+
+   课题：10.4 电容器的电容（人教版必修三 P38–P43）
+
+   口径（与教材原文、教参 P50–P56 逐条对齐）：
+     定义式：C = Q/U         （Q 指【一个极板】所带电荷量的绝对值 —— 教材旁批）
+       Q = CU ｜ U = Q/C
+     属性量：同一个电容器，Q/U 是一个常数，与 U、Q 无关 ★本课最硬的一句话
+       （"电容大小由电容器本身的性质决定，与电压和其所带电荷量无关"）
+     单位：1 F = 1 C/V；1 µF = 10⁻⁶ F；1 pF = 10⁻¹² F
+     平分电荷法（教材图 10.4-4 / 教参 P53–P54）：
+       A 充 Q → 与相同且不带电的 B 并联 ⇒ Q_A = Q_B = Q/2，U 减半；
+       重复 ⇒ Q/2ⁿ，电压表读数依次减半
+       教参 P54 官方实测数据（2200 µF）：U = 3.149 / 1.555 / 0.780 / 0.395 / 0.201 V
+     充放电（RC 一阶过程，τ = RC，充放电在 3–5τ 内基本结束）：
+       充电：U(t) = U₀(1 − e^(−t/τ))，I(t) = (U₀/R)e^(−t/τ)   ← 电压升、电流降【反步调】
+       放电：U(t) = U₀e^(−t/τ)，   I(t) = −(U₀/R)e^(−t/τ)      ← 电流反向
+       断开电源：只剩电压表这条"隐藏的放电回路"，τ_V = R_V·C
+       电荷量 = I-t 曲线下的面积（微元法；与 v-t 面积＝位移同构）
+     平行板电容器（教材 P41–P42 拓展学习）：
+       C = S/(4πkd)（真空）；填满介质 ⇒ C = εrS/(4πkd)；k 为静电力常量（ε₀ = 1/(4πk)）
+       教材路线的大平行板（Ø20 cm、d = 0.5–1.0 cm）只有几十 pF
+     耐压（教材 P41）：击穿电压 > 额定电压；外壳标的是额定电压
+     教材练习（P43）：第3题 C = 4.5×10⁻⁴/3 = 1.5×10⁻⁴ F，2 V 时 C 不变、Q′ = 3.0×10⁻⁴ C；
+                      第4题 除颤器 15 µF 充至 9.0 kV ⇒ Q = CU = 0.135 C
+                      （教参按 4.0 kV 计得 6.0×10⁻² C，两书原书事实，课堂按教材题干 9.0 kV）
+    ===================================================================== */
+(function (global) {
+  'use strict';
+
+  /* ---------- 器材与参数（改这里一处，渲染与外壳共用） ---------- */
+  var K_E = 8.9875517923e9;                 // 静电力常量 k (N·m²/C²)
+  var EPS0 = 1 / (4 * Math.PI * K_E);       // ε₀ = 1/(4πk) —— 与教材 C = S/(4πkd) 严格一致
+
+  /* 环节③ 充放电演示电路（教案 5.2：1.5 V／3 V ＋ 200 µF ＋ G1(2500 Ω) ＋ 3 kΩ ＋ 数字电压表） */
+  var DEMO_U0 = 1.5, DEMO_U0_ALT = 3.0;     // 电源电压 (V)：一节／两节干电池
+  var DEMO_C = 200e-6;                      // 电容器 200 µF
+  var DEMO_RG = 2500;                       // 灵敏电流计 G1 内阻 2500 Ω
+  var DEMO_RL = 3000;                       // 限流电阻 3 kΩ
+  var DEMO_R = DEMO_RG + DEMO_RL;           // 充放电回路总电阻 5.5 kΩ ⇒ τ = 1.1 s
+  var DEMO_IG_MAX = 300e-6;                 // 电流计 G1 量程 ±300 µA（J0409 口径）
+  var DEMO_RV_DIGITAL = 100e6;              // 数字电压表内阻 ≈ 100 MΩ
+  var DEMO_RV_STUDENT = 3e3;                // 学生电压表（3 V 挡）≈ 3 kΩ —— 弃用项
+  var DEMO_TSPAN = 8.0;                     // 观察窗口 (s)：3–5τ = 3.3–5.5 s
+
+  /* 环节③传感器实验（教材 P39：直流 8 V 左右、几十微法的电解电容器） */
+  var SEN_U0 = 8.0, SEN_C = 47e-6, SEN_R = 1000, SEN_TSPAN = 0.25;   // 窗口取到 ≈5τ
+
+  /* 环节④平分电荷（教材图 10.4-4；教参 P53 器材 2200 µF/15 V、两节干电池 3 V） */
+  var SHARE_C = 2200e-6, SHARE_U0 = 3.0;
+  var SHARE_U_MEAS = [3.149, 1.555, 0.780, 0.395, 0.201];   // 教参 P54 官方实测数据 (V)
+
+  /* 环节⑥ 平行板（教材 P41–P42 拓展学习） */
+  var ER_LIST = [{ n: '空气', v: 1.0 }, { n: '聚乙烯', v: 2.3 }, { n: 'PVC', v: 3.2 }];
+  var BIGPLATE_DIA = 0.20;                  // 教材路线大平行板 Ø20 cm
+  var BIGPLATE_D0 = 0.005, BIGPLATE_D1 = 0.010;   // 教参 P55：初始间距取 0.5–1.0 cm
+  var LAM_S0 = 0.04;                        // 叠层式装置单元正对面积 0.04 m² (20 cm × 20 cm)
+  var LAM_D = 25e-6;                        // 单层 PVC 厚 25 µm
+  var EDGE_E_MID = 6.25e4, EDGE_E_EDGE = 0.66e4;  // [外26] 边缘效应定量证据 (V/m)
+
+  /* 教材练习（P43） */
+  var P3_U1 = 3.0, P3_Q1 = 4.5e-4, P3_U2 = 2.0;
+  var P4_C = 15e-6, P4_U = 9.0e3, P4_T = 2.0e-3, P4_U_ALT = 4.0e3;
+
+  /* 耐压设定（课堂演示用；教材只给"额定 < 击穿"这条口径，具体数值为常见电解电容器的余量） */
+  var RATED_U = 50, BREAK_U = 60;           // 外壳标 50 V（额定）；击穿取 1.2 倍
+
+  /* ---------- 电容的定义式（三条互逆关系） ---------- */
+  function capC(Q, U) { return U === 0 ? Infinity : Q / U; }   // C = Q/U
+  function capQ(C, U) { return C * U; }                        // Q = CU
+  function capU(C, Q) { return C === 0 ? Infinity : Q / C; }   // U = Q/C
+  /** 比值定义的意义：U = 1 V 时需要带多少电荷量 ⇒ 就是 C 的数值 */
+  function qPerVolt(C) { return C * 1; }
+
+  /* ---------- 单位 ---------- */
+  function uF(x) { return x * 1e-6; }
+  function pF(x) { return x * 1e-12; }
+  function toUF(F) { return F * 1e6; }
+  function toPF(F) { return F * 1e12; }
+
+  /* ---------- 平分电荷法（教材图 10.4-4） ---------- */
+  /** n 次分半后：电荷量 Q/2ⁿ */
+  function shareQ(Q0, n) { return Q0 / Math.pow(2, n); }
+  /** n 次分半后 A 上的电压（B 分完即放干净，A 上只剩 Q/2ⁿ） */
+  function shareU(C, Q0, n) { return shareQ(Q0, n) / C; }
+  /** 并联瞬间：电荷守恒 ⇒ 两个相同电容器各得一半（Q_A + Q_B = Q0，U 相同 ⇒ Q 相同） */
+  function shareAfter(Q0) { return { qa: Q0 / 2, qb: Q0 / 2, uFrac: 0.5 }; }
+  /** 平分电荷的能量损失比例（仅自检用：½Q²/C → 2·½(Q/2)²/C = Q²/(4C)，损失一半）
+      注：W = CU²/2 与 u-q 面积属复习课素材，按教案 [外20] 不下放新授课，本函数只进断言 */
+  function shareLossFrac() { return 0.5; }
+  /** 官方数据表：相邻两组电压之比（应 ≈ 2；最后一组 1.965 是误差素材） */
+  function measRatio(i) { return SHARE_U_MEAS[i] / SHARE_U_MEAS[i + 1]; }
+  /** 由官方数据表反算电容：Q_n = Q0/2ⁿ、U_n 实测 ⇒ Q/U */
+  function measC(i) { return shareQ(SHARE_C * SHARE_U_MEAS[0], i) / SHARE_U_MEAS[i]; }
+
+  /* ---------- RC 充放电 ---------- */
+  function rcTau(R, C) { return R * C; }
+  function fracAt(tau, t) { return 1 - Math.exp(-t / tau); }
+  /** 充电电压：U(t) = U₀(1 − e^(−t/τ)) */
+  function chargeU(U0, t, tau) { return U0 * (1 - Math.exp(-t / tau)); }
+  /** 充电电流：I(t) = (U₀/R)e^(−t/τ) */
+  function chargeI(U0, R, t, tau) { return (U0 / R) * Math.exp(-t / tau); }
+  /** 放电电压：U(t) = U₀e^(−t/τ) */
+  function dischargeU(U0, t, tau) { return U0 * Math.exp(-t / tau); }
+  /** 放电电流（带符号）：I(t) = −(U₀/R)e^(−t/τ)，与充电方向相反 */
+  function dischargeI(U0, R, t, tau) { return -(U0 / R) * Math.exp(-t / tau); }
+  /** 断开电源后：只剩电压表这条回路，U(t) = U₀e^(−t/τ_V)，τ_V = R_V·C */
+  function leakU(U0, t, RV, C) { return U0 * Math.exp(-t / (RV * C)); }
+  function leakI(U0, t, RV, C) { return (U0 / RV) * Math.exp(-t / (RV * C)); }
+
+  /**
+   * 该时刻的电路状态（场景 circuit 的唯一物理入口）
+   *   phase: 'charge'（S 接 1）| 'discharge'（S 接 2）| 'open'（断开）
+   * 返回 { U, I, Q, tau, iMax, overRange }
+   *   I > 0 = 电流由电源正极流向电容器正极板（本课电路里即电流计处"向右"）
+   */
+  function demoState(sw, t, U0, C, R, RV) {
+    var tau, U, I;
+    if (sw === 1) {
+      tau = rcTau(R, C);
+      U = chargeU(U0, t, tau);
+      I = chargeI(U0, R, t, tau);
+    } else if (sw === 2) {
+      tau = rcTau(R, C);
+      U = dischargeU(U0, t, tau);
+      I = dischargeI(U0, R, t, tau);
+    } else {
+      tau = rcTau(RV || DEMO_RV_DIGITAL, C);
+      U = leakU(U0, t, RV || DEMO_RV_DIGITAL, C);
+      I = leakI(U0, t, RV || DEMO_RV_DIGITAL, C);
+    }
+    return {
+      U: U, I: I, Q: C * U, tau: tau,
+      iMax: U0 / R,
+      overRange: Math.abs(I) > DEMO_IG_MAX,
+      uFrac: U / U0
+    };
+  }
+  /** 充电/放电的电量（解析值）：都是 CU₀ */
+  function qTotal(C, U0) { return C * U0; }
+
+  /* ---------- 微元法：I-t 面积＝电荷量（与 v-t 面积＝位移同构） ---------- */
+  /** 矩形（黎曼）求和：mode = 'left' | 'mid' | 'right' */
+  function riemann(f, t0, t1, N, mode) {
+    N = Math.max(1, Math.round(N));
+    var dt = (t1 - t0) / N, s = 0, i, x;
+    for (i = 0; i < N; i++) {
+      x = (mode === 'left') ? (t0 + i * dt)
+        : (mode === 'right') ? (t0 + (i + 1) * dt)
+          : (t0 + (i + 0.5) * dt);
+      s += f(x) * dt;
+    }
+    return s;
+  }
+  /** 梯形求和（对照用） */
+  function trapezoid(f, t0, t1, N) {
+    N = Math.max(1, Math.round(N));
+    var dt = (t1 - t0) / N, s = 0, i;
+    for (i = 0; i < N; i++) { s += (f(t0 + i * dt) + f(t0 + (i + 1) * dt)) / 2 * dt; }
+    return s;
+  }
+  /** 指数放电曲线的真实面积（解析）：∫₀^∞ I₀e^(−t/τ)dt = I₀τ = CU₀ */
+  function areaExact(U0, R, C) { return (U0 / R) * R * C; }
+  /** 由 I-t 面积反算电容：C = Q/U₀ */
+  function capFromArea(area, U0) { return capC(area, U0); }
+  /** v-t 面积＝位移（匀速对照：v 恒定） */
+  function areaV(v0, T) { return v0 * T; }
+
+  /* ---------- 平行板电容器（教材 P41–P42） ---------- */
+  /** C = εr·S/(4πkd)；εr = 1 即真空/空气 */
+  function plateC(S, d, er) { return (er === undefined ? 1 : er) * S / (4 * Math.PI * K_E * d); }
+  /** 等价写法（用于自检）：C = ε₀εrS/d */
+  function plateCeps(S, d, er) { return EPS0 * (er === undefined ? 1 : er) * S / d; }
+  /** 圆形极板正对面积 */
+  function discArea(dia) { return Math.PI * dia * dia / 4; }
+  /** 可变电容器：转动动片 ⇒ 正对面积按转角线性减小（θ = 0 全重叠，θ = 180° 不重叠） */
+  function varCap(S0, thetaDeg, d, er) { return plateC(S0 * (1 - thetaDeg / 180), d, er); }
+  function varArea(S0, thetaDeg) { return S0 * (1 - thetaDeg / 180); }
+  /** 叠层式装置：n 个单元并联 ⇒ C = n·ε₀εrS₀/d（d = 单层厚度） */
+  function lamCap(n, er) { return n * plateC(LAM_S0, LAM_D, er); }
+  /** 边缘效应：均匀区与边缘处的场强（[外26]） */
+  function edgeRatio() { return EDGE_E_EDGE / EDGE_E_MID; }
+
+  /* ---------- 耐压（教材 P41） ---------- */
+  /** 返回 'safe'（≤ 额定）| 'rated'（超额定、未击穿）| 'break'（击穿损坏） */
+  function voltageStatus(U, rated, brk) {
+    rated = rated === undefined ? RATED_U : rated;
+    brk = brk === undefined ? BREAK_U : brk;
+    if (U > brk) { return 'break'; }
+    if (U > rated) { return 'rated'; }
+    return 'safe';
+  }
+
+  /* ---------- 教材练习（P43） ---------- */
+  function pr3C() { return capC(P3_Q1, P3_U1); }            // 1.5×10⁻⁴ F
+  function pr3Q2() { return capQ(pr3C(), P3_U2); }          // 3.0×10⁻⁴ C（C 不变）
+  function pr4Q(U) { return capQ(P4_C, U === undefined ? P4_U : U); }   // 9.0 kV ⇒ 0.135 C
+  function pr4I(U) { return pr4Q(U) / P4_T; }               // 2.0 ms 内的平均电流
+
+  /* ---------- 常用的量级（安全/单位一幕用） ---------- */
+  var SCALE_MARKS = [
+    { F: 1, t: '1 F（法拉）', sub: '1 C/V：每升高 1 V 存进 1 C' },
+    { F: 1e-3, t: '1 mF', sub: '10⁻³ F' },
+    { F: 2200e-6, t: '2200 µF', sub: '本课平分电荷实验的电容器' },
+    { F: 47e-6, t: '47 µF', sub: '传感器放电实验' },
+    { F: 15e-6, t: '15 µF', sub: '心脏除颤器' },
+    { F: 200e-6, t: '200 µF', sub: '充放电演示' },
+    { F: 1e-12, t: '1 pF', sub: '10⁻¹² F' },
+    { F: 28e-12, t: '≈28–56 pF', sub: '教材路线的大平行板' }
+  ];
+
+  /* ================= 自检（科学性由断言锁住） ================= */
+  function runSelfTest() {
+    var checks = 0, fails = [];
+    function ok(cond, msg) { checks++; if (!cond) { fails.push(msg); } }
+    function eq(a, b, tag, tol) {
+      checks++;
+      var e = Math.abs(a - b), t = tol === undefined ? 1e-9 : tol;
+      if (!(e <= t)) { fails.push(tag + '：' + a + ' ≠ ' + b + '（误差 ' + e + '）'); }
+    }
+    var i, j, k;
+
+    /* 1) 定义式三条互逆关系；★同一电容器 C 与 U、Q 无关（认知障碍①） */
+    var Cs = [pF(47), uF(200), uF(2200), FIX1()], Us = [0.5, 1, 2, 3, 9.0e3];
+    function FIX1() { return 1; }
+    for (i = 0; i < Cs.length; i++) {
+      for (j = 0; j < Us.length; j++) {
+        var C0 = Cs[i], U0v = Us[j], Q0v = capQ(C0, U0v);
+        eq(capC(Q0v, U0v), C0, '①C = Q/U 反解', 1e-18);
+        eq(capU(C0, Q0v), U0v, '①U = Q/C 反解', 1e-12);
+        eq(capQ(C0, capU(C0, Q0v)), Q0v, '①Q = CU 往返一致', 1e-18);
+        eq(capC(Q0v, U0v), capC(capQ(C0, 3 * U0v), 3 * U0v), '①★C 与 U、Q 无关（同一电容器）');
+      }
+      /* U = 0（电容器不带电）时，C 依然不变 —— 不是 0 */
+      eq(capQ(C0, 0), 0, '①U = 0 ⇒ Q = 0', 0);
+      eq(capC(capQ(C0, 2), 2), C0, '①不带电时 C 也不会变成 0', 1e-18);
+    }
+    ok(voltageStatus(0) === 'safe', '①0 V 状态安全');
+
+    /* 2) 单位链：1 F = 1 C/V；µF / pF 换算 */
+    eq(capC(1, 1), 1, '②1 F = 1 C/V');
+    eq(uF(1), 1e-6, '②1 µF = 10⁻⁶ F');
+    eq(pF(1), 1e-12, '②1 pF = 10⁻¹² F');
+    eq(toUF(uF(2200)), 2200, '②2200 µF 往返换算', 1e-9);
+    eq(toPF(pF(47)), 47, '②47 pF 往返换算', 1e-9);
+    eq(qPerVolt(uF(2200)), 2.2e-3, '②2200 µF：每升高 1 V 需要 2.2×10⁻³ C', 1e-15);
+
+    /* 3) 教参 P54 官方数据表：U ∝ Q（相邻电压比 ≈ 2；最后一组 1.965 属误差） */
+    for (i = 0; i < SHARE_U_MEAS.length - 1; i++) {
+      var ratio = measRatio(i);
+      ok(ratio > 1.9 && ratio < 2.1, '③相邻电压比 ≈ 2（第 ' + i + ' 组 = ' + ratio.toFixed(3) + '）');
+    }
+    ok(measRatio(0) > measRatio(3), '③电压比逐组更接近 2 之外时也仍在 1.9–2.1 内（含 1.965）');
+    ok(Math.abs(SHARE_U_MEAS[0] / SHARE_U_MEAS[4] - 16) / 16 < 0.03, '③U₀/U₄ ≈ 16 = 2⁴（2% 偏差）');
+    for (i = 0; i < SHARE_U_MEAS.length; i++) {
+      ok(Math.abs(measC(i) - SHARE_C) / SHARE_C < 0.03, '③由表反算 C 与 2200 µF 相差 < 3%（第 ' + i + ' 行）');
+    }
+
+    /* 4) 平分电荷：Q/2ⁿ、U 减半、电荷守恒；两电容器并联各得一半 */
+    for (i = 0; i <= 4; i++) {
+      eq(shareQ(SHARE_C * SHARE_U0, i), SHARE_C * SHARE_U0 / Math.pow(2, i), '④Q/2ⁿ', 1e-18);
+      eq(shareU(SHARE_C, SHARE_C * SHARE_U0, i), SHARE_U0 / Math.pow(2, i), '④U 依次减半', 1e-12);
+    }
+    var aft = shareAfter(1.0);
+    eq(aft.qa + aft.qb, 1.0, '④并联后电荷守恒', 0);
+    eq(aft.qa, aft.qb, '④规格相同的两只各分一半', 0);
+    eq(shareLossFrac(), 0.5, '④平分电荷能量损失一半（仅自检）', 0);
+    /* 分半后每个极板电荷量减半：Q 指一个极板的绝对值 */
+    eq(shareQ(6.9e-3, 1), 3.45e-3, '④一个极板的电荷量减半', 1e-15);
+
+    /* 5) RC 充放电：τ = RC、0.632、0.993、反步调、充放电电量相等 */
+    var tau = rcTau(DEMO_R, DEMO_C);
+    eq(tau, 1.1, '⑤τ = RC = 5.5 kΩ × 200 µF = 1.1 s', 1e-12);
+    eq(fracAt(tau, 3 * tau), 0.9502, '⑤3τ ≈ 95%', 1e-3);
+    eq(fracAt(tau, 5 * tau), 0.9933, '⑤5τ ≈ 99.3%', 1e-3);
+    eq(chargeU(DEMO_U0, tau, tau) / DEMO_U0, 0.63212, '⑤充电 τ 时到 63.2%', 1e-4);
+    eq(chargeI(DEMO_U0, DEMO_R, 0, tau), DEMO_U0 / DEMO_R, '⑤I(0) = U₀/R', 1e-15);
+    eq(chargeI(DEMO_U0, DEMO_R, tau, tau), (DEMO_U0 / DEMO_R) / Math.E, '⑤I(τ) = I₀/e', 1e-15);
+    eq(dischargeU(DEMO_U0, 5 * tau, tau) / DEMO_U0, 0.006738, '⑤放电 5τ 后剩 0.67%', 1e-5);
+    ok(dischargeI(DEMO_U0, DEMO_R, 0, tau) < 0, '⑤放电电流与充电方向相反');
+    ok(Math.abs(dischargeI(DEMO_U0, DEMO_R, 0, tau)) === chargeI(DEMO_U0, DEMO_R, 0, tau), '⑤放电电流大小与充电对称');
+    /* 反步调：充电时 U 单调升、I 单调降 */
+    var prevU = -1, prevI = Infinity;
+    for (k = 0; k <= 20; k++) {
+      var tt = k * tau / 4;
+      var UU = chargeU(DEMO_U0, tt, tau), II = chargeI(DEMO_U0, DEMO_R, tt, tau);
+      ok(UU >= prevU - 1e-15, '⑤充电：U 单调增');
+      ok(II <= prevI + 1e-15, '⑤充电：I 单调减（反步调）');
+      prevU = UU; prevI = II;
+    }
+    /* 充、放电的电量相等且都等于 CU₀ */
+    var qCh = riemann(function (t) { return chargeI(DEMO_U0, DEMO_R, t, tau); }, 0, 40 * tau, 40000, 'mid');
+    var qDis = riemann(function (t) { return Math.abs(dischargeI(DEMO_U0, DEMO_R, t, tau)); }, 0, 40 * tau, 40000, 'mid');
+    eq(qCh, qTotal(DEMO_C, DEMO_U0), '⑤充电电量 = CU₀', 1e-9);
+    eq(qDis, qTotal(DEMO_C, DEMO_U0), '⑤放电电量 = CU₀', 1e-9);
+
+    /* 6) 断开电源：数字电压表（100 MΩ）下电压几乎不变；学生电压表（3 kΩ）下很快放完 */
+    var tOpen = 5.0;
+    ok(leakU(DEMO_U0, tOpen, DEMO_RV_DIGITAL, DEMO_C) / DEMO_U0 > 0.9997, '⑥断开 5 s：数字电压表下电压几乎不变');
+    ok(leakU(DEMO_U0, tOpen, DEMO_RV_STUDENT, DEMO_C) / DEMO_U0 < 0.001, '⑥断开 5 s：学生电压表下电荷基本放完');
+    eq(rcTau(DEMO_RV_DIGITAL, DEMO_C), 2e4, '⑥τ_V（100 MΩ×200 µF）= 2×10⁴ s ≈ 5.5 h', 1e-6);
+    eq(rcTau(DEMO_RV_STUDENT, DEMO_C), 0.6, '⑥τ_V（3 kΩ×200 µF）= 0.6 s', 1e-12);
+
+    /* 7) I-t 面积 = 电荷量（微元法）：左端低估、右端高估、中点最准、N 增大误差减小 */
+    var f = function (t) { return chargeI(SEN_U0, SEN_R, t, SEN_TAU(), tauS()); };
+    function tauS() { return rcTau(SEN_R, SEN_C); }
+    function SEN_TAU() { return tauS(); }
+    var exact = qTotal(SEN_C, SEN_U0);
+    eq(exact, 3.76e-4, '⑦传感器实验：Q = CU₀ = 3.76×10⁻⁴ C', 1e-8);
+    eq(SEN_U0 / SEN_R, 8e-3, '⑦I₀ = U₀/R = 8.0 mA', 1e-12);
+    eq(tauS() * 1e3, 47, '⑦τ = RC = 47 ms', 1e-9);
+    /* 窗口取到 10τ：窗口内的真实面积 tb，以及三种取点的系统性偏差 */
+    var WIN = 10 * tauS();
+    var tb = riemann(f, 0, WIN, 200000, 'mid');
+    ok(Math.abs(tb - exact) / exact < 1e-3, '⑦10τ 窗口内面积已 ≈ CU₀（差 ' + (Math.abs(tb - exact) / exact * 100).toFixed(3) + '%）');
+    var leftArea = riemann(f, 0, WIN, 40, 'left');
+    var rightArea = riemann(f, 0, WIN, 40, 'right');
+    var midArea = riemann(f, 0, WIN, 40, 'mid');
+    ok(leftArea > tb, '⑦左端点矩形高估面积（电流在减小，左端点是每小段的最大值）');
+    ok(rightArea < tb, '⑦右端点矩形低估面积');
+    ok(Math.abs(midArea - tb) < Math.abs(leftArea - tb), '⑦中点矩形更接近真实面积');
+    ok(Math.abs(midArea - tb) < Math.abs(rightArea - tb), '⑦中点矩形优于右端点');
+    /* 课堂窗口（SEN_TSPAN ≈ 5τ）：面积已到 99.5%，剩下的尾巴要说清楚 */
+    var midWin = riemann(f, 0, SEN_TSPAN, 60, 'mid');
+    ok(midWin < exact && midWin / exact > 0.99, '⑦课堂窗口（5τ）内面积已达 99.5% 以上');
+    var ePrev = Infinity;
+    for (i = 1; i <= 6; i++) {
+      var N = Math.pow(2, i) * 5;
+      var err = Math.abs(riemann(f, 0, WIN, N, 'mid') - tb);
+      ok(err <= ePrev + 1e-18, '⑦N 增大误差不增（N = ' + N + '）');
+      ePrev = err;
+    }
+    ok(Math.abs(trapezoid(f, 0, WIN, 200) - tb) < Math.abs(leftArea - tb), '⑦梯形求和优于左端点矩形');
+    ok(Math.abs(trapezoid(f, 0, WIN, 200) - tb) < Math.abs(rightArea - tb), '⑦梯形求和优于右端点矩形');
+    ok(Math.abs(trapezoid(f, 0, WIN, 6400) - tb) / tb < 1e-3, '⑦梯形求和误差 < 0.1%');
+    eq(areaExact(SEN_U0, SEN_R, SEN_C), exact, '⑦解析面积 = CU₀', 1e-18);
+    eq(capFromArea(tb, SEN_U0), SEN_C, '⑦由面积反算电容 = 47 µF', 1e-4);
+    /* 与 v-t 面积＝位移同构 */
+    eq(riemann(function () { return 6; }, 0, 4, 37, 'left'), areaV(6, 4), '⑦v-t 面积 = 位移（同构）', 1e-9);
+    eq(riemann(function () { return 6; }, 0, 4, 37, 'mid'), 24, '⑦匀速时三种取点都一样', 1e-9);
+
+    /* 8) 平行板：C = εrS/(4πkd) = ε₀εrS/d；S 加倍 ⇒ C 加倍；d 加倍 ⇒ C 减半；插介质 ⇒ ×εr */
+    var S0 = 0.02, d0 = 0.002;
+    for (i = 0; i < ER_LIST.length; i++) {
+      var er = ER_LIST[i].v;
+      eq(plateC(S0, d0, er), plateCeps(S0, d0, er), '⑧两种写法一致 (εr = ' + er + ')', 1e-24);
+      eq(plateC(2 * S0, d0, er), 2 * plateC(S0, d0, er), '⑧S 加倍 ⇒ C 加倍', 1e-24);
+      eq(plateC(S0, 2 * d0, er), plateC(S0, d0, er) / 2, '⑧d 加倍 ⇒ C 减半', 1e-24);
+      eq(plateC(S0, d0, er) / plateC(S0, d0, 1), er, '⑧插入介质 ⇒ ×εr', 1e-12);
+    }
+    ok(plateC(S0, d0, 3.2) > plateC(S0, d0, 2.3), '⑧PVC（3.2）> 聚乙烯（2.3）> 空气（1）');
+    /* 教材路线的大平行板：几十 pF（真空/空气） */
+    var cBig1 = plateC(discArea(BIGPLATE_DIA), BIGPLATE_D0, 1);
+    var cBig2 = plateC(discArea(BIGPLATE_DIA), BIGPLATE_D1, 1);
+    ok(toPF(cBig1) > 20 && toPF(cBig1) < 60, '⑧Ø20 cm、d = 5 mm ⇒ ' + toPF(cBig1).toFixed(1) + ' pF（几十 pF 量级）');
+    ok(toPF(cBig2) > 20 && toPF(cBig2) < 60, '⑧Ø20 cm、d = 1 cm ⇒ ' + toPF(cBig2).toFixed(1) + ' pF');
+    ok(cBig1 > cBig2, '⑧d 越小电容越大');
+    ok(toPF(cBig1) < 200, '⑧教材路线的大平行板 < 200 pF（普通电容挡最低量程也难分辨）');
+    /* 叠层式装置（25 µm PVC、多层并联）⇒ 落到 0.6–2.8 µF */
+    ok(toUF(lamCap(20, 3.2)) > 0.6 && toUF(lamCap(20, 3.2)) < 1.2, '⑧叠层 20 单元 ≈ ' + toUF(lamCap(20, 3.2)).toFixed(2) + ' µF');
+    ok(toUF(lamCap(60, 3.2)) > 2.0 && toUF(lamCap(60, 3.2)) < 3.2, '⑧叠层 60 单元 ≈ ' + toUF(lamCap(60, 3.2)).toFixed(2) + ' µF');
+    eq(lamCap(3, 3.2) / lamCap(1, 3.2), 3, '⑧n 个单元并联 ⇒ C 变 n 倍', 1e-12);
+
+    /* 9) 可变电容器：θ = 0 全正对、θ = 180° 为零、单调减小 */
+    eq(varArea(1, 0), 1, '⑨θ = 0 ⇒ 全部正对', 0);
+    eq(varArea(1, 180), 0, '⑨θ = 180° ⇒ 正对面积为零', 0);
+    var prevC = Infinity;
+    for (k = 0; k <= 12; k++) {
+      var cc = varCap(0.004, k * 15, 0.001, 1);
+      ok(cc <= prevC + 1e-24, '⑨转动动片 ⇒ C 单调减小');
+      prevC = cc;
+    }
+    eq(varCap(0.004, 0, 0.001, 1), plateC(0.004, 0.001, 1), '⑨θ = 0 时与平行板公式一致', 1e-18);
+
+    /* 10) 教材练习第3题：C = 1.5×10⁻⁴ F；2 V 时 C 不变、Q′ = 3.0×10⁻⁴ C */
+    eq(pr3C(), 1.5e-4, '⑩C = 4.5×10⁻⁴/3 = 1.5×10⁻⁴ F', 1e-18);
+    eq(pr3Q2(), 3.0e-4, '⑩U 降为 2 V ⇒ Q′ = CU′ = 3.0×10⁻⁴ C', 1e-18);
+    eq(capC(pr3Q2(), P3_U2), pr3C(), '⑩降压后 C 不变', 1e-18);
+
+    /* 11) 教材练习第4题：除颤器 9.0 kV ⇒ 0.135 C；教参按 4.0 kV ⇒ 6.0×10⁻² C */
+    eq(pr4Q(P4_U), 0.135, '⑪Q = CU = 15 µF × 9.0 kV = 0.135 C', 1e-15);
+    eq(pr4Q(P4_U_ALT), 6.0e-2, '⑪按 4.0 kV 计 ⇒ 6.0×10⁻² C', 1e-15);
+    eq(pr4I(P4_U), 67.5, '⑪2.0 ms 内平均电流 = 67.5 A', 1e-9);
+    eq(pr4Q(P4_U) / pr4Q(P4_U_ALT), 2.25, '⑪两版答案相差 2.25 倍', 1e-12);
+
+    /* 12) 耐压：额定 < 击穿；三档状态 */
+    ok(RATED_U < BREAK_U, '⑫额定电压低于击穿电压');
+    ok(voltageStatus(40) === 'safe', '⑫40 V 安全');
+    ok(voltageStatus(55) === 'rated', '⑫55 V 超额定（未击穿）');
+    ok(voltageStatus(65) === 'break', '⑫65 V 击穿损坏');
+    ok(voltageStatus(RATED_U) === 'safe', '⑫恰好等于额定 ⇒ 仍安全');
+    ok(voltageStatus(BREAK_U) === 'rated', '⑫恰好等于击穿 ⇒ 未判损坏（边界取严）');
+
+    /* 13) 场景 circuit 的物理入口与渲染口径一致 */
+    var sCh = demoState(1, 0, DEMO_U0, DEMO_C, DEMO_R, DEMO_RV_DIGITAL);
+    eq(sCh.U, 0, '⑬充电起点 U = 0', 0);
+    eq(sCh.I, DEMO_U0 / DEMO_R, '⑬充电起点电流最大', 1e-15);
+    ok(sCh.overRange === false, '⑬1.5 V 时电流 273 µA 未超 G1 量程');
+    var sCh3 = demoState(1, 0, DEMO_U0_ALT, DEMO_C, DEMO_R, DEMO_RV_DIGITAL);
+    ok(sCh3.overRange === true, '⑬3 V 时 545 µA 超 G1（±300 µA）量程 —— 器材红线');
+    var sDis = demoState(2, 0, DEMO_U0, DEMO_C, DEMO_R, DEMO_RV_DIGITAL);
+    eq(sDis.U, DEMO_U0, '⑬放电起点电压为满值', 1e-15);
+    ok(sDis.I < 0, '⑬放电电流为负（方向与充电相反）');
+    var sOpen = demoState(0, DEMO_TSPAN, DEMO_U0, DEMO_C, DEMO_R, DEMO_RV_DIGITAL);
+    ok(sOpen.U / DEMO_U0 > 0.9995, '⑬断开 8 s 后读数几乎不变（降 0.04%）');
+    eq(sDis.Q, qTotal(DEMO_C, DEMO_U0), '⑬满电时的电荷量 = CU₀ = 3×10⁻⁴ C', 1e-18);
+
+    /* 14) 边缘效应：均匀区远大于边缘（匀强电场是理想模型） */
+    ok(EDGE_E_MID > 9 * EDGE_E_EDGE, '⑭中部场强约为边缘的 9.5 倍（[外26]）');
+    eq(edgeRatio(), 0.1056, '⑭边缘/中部 ≈ 0.106', 1e-3);
+
+    return { pass: fails.length === 0, checks: checks, failed: fails.slice(0, 8) };
+  }
+
+  var api = {
+    K_E: K_E, EPS0: EPS0,
+    DEMO_U0: DEMO_U0, DEMO_U0_ALT: DEMO_U0_ALT, DEMO_C: DEMO_C,
+    DEMO_RG: DEMO_RG, DEMO_RL: DEMO_RL, DEMO_R: DEMO_R, DEMO_IG_MAX: DEMO_IG_MAX,
+    DEMO_RV_DIGITAL: DEMO_RV_DIGITAL, DEMO_RV_STUDENT: DEMO_RV_STUDENT, DEMO_TSPAN: DEMO_TSPAN,
+    SEN_U0: SEN_U0, SEN_C: SEN_C, SEN_R: SEN_R, SEN_TSPAN: SEN_TSPAN,
+    SHARE_C: SHARE_C, SHARE_U0: SHARE_U0, SHARE_U_MEAS: SHARE_U_MEAS,
+    ER_LIST: ER_LIST, BIGPLATE_DIA: BIGPLATE_DIA, BIGPLATE_D0: BIGPLATE_D0, BIGPLATE_D1: BIGPLATE_D1,
+    LAM_S0: LAM_S0, LAM_D: LAM_D, EDGE_E_MID: EDGE_E_MID, EDGE_E_EDGE: EDGE_E_EDGE,
+    P3_U1: P3_U1, P3_Q1: P3_Q1, P3_U2: P3_U2, P4_C: P4_C, P4_U: P4_U, P4_T: P4_T, P4_U_ALT: P4_U_ALT,
+    RATED_U: RATED_U, BREAK_U: BREAK_U, SCALE_MARKS: SCALE_MARKS,
+    capC: capC, capQ: capQ, capU: capU, qPerVolt: qPerVolt,
+    uF: uF, pF: pF, toUF: toUF, toPF: toPF,
+    shareQ: shareQ, shareU: shareU, shareAfter: shareAfter, shareLossFrac: shareLossFrac,
+    measRatio: measRatio, measC: measC,
+    rcTau: rcTau, fracAt: fracAt, chargeU: chargeU, chargeI: chargeI,
+    dischargeU: dischargeU, dischargeI: dischargeI, leakU: leakU, leakI: leakI,
+    demoState: demoState, qTotal: qTotal,
+    riemann: riemann, trapezoid: trapezoid, areaExact: areaExact, capFromArea: capFromArea, areaV: areaV,
+    plateC: plateC, plateCeps: plateCeps, discArea: discArea, varCap: varCap, varArea: varArea,
+    lamCap: lamCap, edgeRatio: edgeRatio, voltageStatus: voltageStatus,
+    pr3C: pr3C, pr3Q2: pr3Q2, pr4Q: pr4Q, pr4I: pr4I,
+    runSelfTest: runSelfTest
+  };
+
+  global.VizPhys = api;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = api;
+    if (typeof process !== 'undefined' && process.argv && /viz_ca_physics\.js$/.test(process.argv[1] || '')) {
+      var r = runSelfTest();
+      console.log((r.pass ? '✓' : '✗') + ' selfTest: ' + r.checks + ' 项，失败 ' + r.failed.length);
+      if (r.failed.length) { console.log(r.failed.join('\n')); }
+      process.exitCode = r.pass ? 0 : 1;
+    }
+  }
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* =====================================================================
+   viz_ca_render.js —— 绘制层（10.4 电容器的电容）
+
+   视觉语言：原版 Manim 基调 —— 纯黑底、白线为主、Manim 官方色常量
+     黄 #FFFF00 = C（本课主角量：电容、结论、当前读数）
+     金 #F0AC5F = Q／电荷／水（"装进容器的东西"）
+     绿 #83C167 = U／水位（电荷堆积出来的电势差）
+     红 #FC6255 / 蓝 #58C4DD = 正 / 负（极板带电、危险状态）
+     紫 #9A72AC = 辅助构造（辅助线、对照、误差标注）
+     白 = 几何（电路导线、极板、坐标轴）｜ 灰 = 参考、辅助标注、未激活的器材
+
+   场景（st.scene）：
+     'model'    电容器模型：水容器类比 → 拆开卷绕薄膜 → 两个导体就是电容器
+     'circuit'  充放电电路（教材图 10.4-1）：开关、电流计、数字电压表 + U–t / I–t 曲线
+     'sharing'  平分电荷法（教材图 10.4-4）：A／B／S1／S2 ＋ 数据表
+     'qu'       Q–U 图（斜率 = C）与同电压下不同电容器的对照
+     'plate'    平行板电容器：C 与 S、d、εr（拓展学习）
+     'itarea'   I-t 面积 ＝ 电荷量（与 v-t 面积 ＝ 位移同构）
+     'defn'     水容器 ↔ 电容器 的类比；"双胞胎对照"表（比值定义第三次落地）
+     'safety'   单位与数量级；击穿电压与额定电压
+     'apps'     常用电容器与可变电容器（拖动片）
+     'practice' 练习与应用：第1题表格／第2题四图／第3题计算／第4题除颤器
+     'text'     结论页
+   ===================================================================== */
+(function (global) {
+  'use strict';
+
+  var P = global.VizPhys;
+
+  var THEME = {
+    bg: '#000000',
+    white: '#FFFFFF', grey: '#888888',
+    red: '#FC6255', blue: '#58C4DD',
+    yellow: '#FFFF00', gold: '#F0AC5F', green: '#83C167', purple: '#9A72AC',
+    wire: 'rgba(255,255,255,0.55)',
+    wireSoft: 'rgba(255,255,255,0.26)',
+    grid: 'rgba(255,255,255,0.10)',
+    ghost: 'rgba(136,136,136,0.55)',
+    goldFill: 'rgba(240,172,95,0.35)',
+    goldSoft: 'rgba(240,172,95,0.16)',
+    greenFill: 'rgba(131,193,103,0.22)',
+    yellowSoft: 'rgba(255,255,0,0.12)',
+    redFill: 'rgba(252,98,85,0.22)',
+    blueFill: 'rgba(88,196,221,0.22)',
+    greyFill: 'rgba(136,136,136,0.18)'
+  };
+
+  var FONT = '"Microsoft YaHei","PingFang SC","Noto Sans SC","WenQuanYi Zen Hei",sans-serif';
+  var PADL = 56, PADR = 26, PADT = 26, PADB = 24;
+
+  function fs(size, weight) { return (weight ? weight + ' ' : '') + size + 'px ' + FONT; }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function num(v, d) { return (v < 0 ? '−' : '') + Math.abs(v).toFixed(d === undefined ? 2 : d); }
+
+  /* ---------- 数字格式化（右栏与画布共用同一套，避免两处数字不一致） ---------- */
+  var SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+  function sup(n) {
+    return String(n).split('').map(function (c) { return SUP[c] || c; }).join('');
+  }
+  function sciFmt(x, d) {
+    d = (d === undefined) ? 2 : d;
+    if (Math.abs(x) < 1e-30) { return '0'; }
+    var s = x < 0 ? '−' : '';
+    var a = Math.abs(x), e = Math.floor(Math.log10(a) + 1e-12);
+    var m = a / Math.pow(10, e);
+    if (m >= 10) { m /= 10; e++; }
+    if (m < 1) { m *= 10; e--; }
+    var ms = m.toFixed(d);
+    if (parseFloat(ms) >= 10) { e++; ms = (m / 10).toFixed(d); }
+    return s + ms + '×10' + sup(e);
+  }
+  /** 电荷量 */
+  function qfmt(Q) {
+    var a = Math.abs(Q);
+    if (a < 1e-30) { return '0 C'; }
+    if (a >= 1) { return num(Q, a < 10 ? 2 : 1) + ' C'; }
+    if (a >= 0.01) { return num(Q, 3) + ' C'; }
+    return sciFmt(Q, 2) + ' C';
+  }
+  /** 电压 */
+  function ufmt(U) {
+    var a = Math.abs(U);
+    if (a >= 1000) { return num(U / 1000, a < 1e4 ? 1 : 2) + ' kV'; }
+    if (a >= 1) { return num(U, a < 10 ? 3 : (a < 100 ? 1 : 0)) + ' V'; }
+    if (a >= 0.001) { return num(U * 1000, 1) + ' mV'; }
+    return num(U, 3) + ' V';
+  }
+  /** 电容 */
+  function cfmt(C) {
+    var a = Math.abs(C);
+    if (a >= 1) { return num(C, 2) + ' F'; }
+    if (a >= 1e-3) { return num(C * 1e3, C * 1e3 < 10 ? 2 : 0) + ' mF'; }
+    if (a >= 1e-6) { return num(C * 1e6, C * 1e6 < 10 ? 2 : (C * 1e6 < 100 ? 1 : 0)) + ' µF'; }
+    if (a >= 1e-9) { return num(C * 1e9, 2) + ' nF'; }
+    return num(C * 1e12, C * 1e12 < 10 ? 2 : 1) + ' pF'; 
+  }
+  /** 电流 */
+  function ifmt(I) {
+    var a = Math.abs(I), s = I < 0 ? '−' : '';
+    if (a >= 1) { return s + num(a, a < 10 ? 1 : 0) + ' A'; }
+    if (a >= 1e-3) { return s + num(a * 1e3, 2) + ' mA'; }
+    if (a >= 1e-6) { return s + num(a * 1e6, a * 1e6 < 10 ? 1 : 0) + ' µA'; }
+    return s + sciFmt(a, 1) + ' A';
+  }
+  /** 时间 */
+  function tfmt(t) {
+    if (Math.abs(t) >= 1) { return num(t, 2) + ' s'; }
+    if (Math.abs(t) >= 1e-3) { return num(t * 1e3, 1) + ' ms'; }
+    return sciFmt(t, 1) + ' s';
+  }
+
+  /* ---------- 画布 ---------- */
+  function fitCanvas(cv) {
+    var dpr = Math.min(2, global.devicePixelRatio || 1);
+    var r = cv.getBoundingClientRect();
+    var W = Math.max(360, Math.round(r.width)), H = Math.max(280, Math.round(r.height));
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) {
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, W: W, H: H };
+  }
+
+  /* ---------- 基础图形 ---------- */
+  function seg(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+  function stroke(ctx, color, lw) { ctx.strokeStyle = color; ctx.lineWidth = lw === undefined ? 1.4 : lw; }
+  function dash(ctx, pat) { ctx.setLineDash(pat || [7, 5]); }
+  function nodash(ctx) { ctx.setLineDash([]); }
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = fs(o.size || 12.5, o.weight);
+    ctx.fillStyle = o.color || THEME.white;
+    ctx.textAlign = o.align || 'left';
+    ctx.textBaseline = o.baseline || 'middle';
+    var a = ctx.globalAlpha;
+    if (o.alpha !== undefined) { ctx.globalAlpha = a * o.alpha; }
+    ctx.fillText(s, x, y);
+    ctx.globalAlpha = a;
+  }
+  function head(ctx, x, y, ang, size, color) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - size * Math.cos(ang - 0.42), y - size * Math.sin(ang - 0.42));
+    ctx.lineTo(x - size * Math.cos(ang + 0.42), y - size * Math.sin(ang + 0.42));
+    ctx.closePath();
+    ctx.fillStyle = color; ctx.fill();
+  }
+  function arrow(ctx, x1, y1, x2, y2, color, lw, hs) {
+    stroke(ctx, color, lw === undefined ? 1.4 : lw);
+    seg(ctx, x1, y1, x2, y2);
+    head(ctx, x2, y2, Math.atan2(y2 - y1, x2 - x1), hs || 7, color);
+  }
+  function darrow(ctx, x1, y1, x2, y2, color, lw, hs) {
+    hs = hs || 7;
+    arrow(ctx, (x1 + x2) / 2, (y1 + y2) / 2, x2, y2, color, lw, hs);
+    arrow(ctx, (x1 + x2) / 2, (y1 + y2) / 2, x1, y1, color, lw, hs);
+  }
+  function dot(ctx, x, y, r, color, filled) {
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    if (filled === false) { stroke(ctx, color, 2); ctx.stroke(); } else { ctx.fillStyle = color; ctx.fill(); }
+  }
+  function label(ctx, s, x, y, color, size, align, baseline) {
+    text(ctx, s, x, y, { color: color || THEME.white, size: size || 12.5, weight: 600, align: align || 'center', baseline: baseline || 'middle' });
+  }
+  function panel(ctx, x, y, w, h) { ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.fillRect(x, y, w, h); }
+  function box(ctx, x, y, w, h, color, lw) {
+    stroke(ctx, color, lw === undefined ? 1 : lw);
+    ctx.strokeRect(x, y, w, h);
+  }
+  function roundBox(ctx, x, y, w, h, r, color, lw) {
+    var rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+    stroke(ctx, color, lw === undefined ? 1 : lw);
+    ctx.stroke();
+  }
+  function glowDot(ctx, x, y, r, color, blur) {
+    ctx.shadowColor = color; ctx.shadowBlur = blur || 10;
+    dot(ctx, x, y, r, color, true);
+    ctx.shadowBlur = 0;
+  }
+  /** 竖直电容器符号（两个极板 + 引线），返回两极板的 x 坐标 */
+  function capSymbol(ctx, x, y, gap, halfH, color, lw) {
+    stroke(ctx, color || THEME.white, lw || 4.5);
+    seg(ctx, x - gap, y - halfH, x - gap, y + halfH);
+    seg(ctx, x + gap, y - halfH, x + gap, y + halfH);
+  }
+  /** 电容器（水平极板）：上板 y1、下板 y2 */
+  function capPlates(ctx, x, y1, y2, halfW, color, lw) {
+    stroke(ctx, color || THEME.white, lw || 4.5);
+    seg(ctx, x - halfW, y1, x + halfW, y1);
+    seg(ctx, x - halfW, y2, x + halfW, y2);
+  }
+  /** 电池（竖直，+ 在上）：返回 {top, bot} 两端点 y */
+  function batterySym(ctx, x, y, color) {
+    color = color || THEME.white;
+    stroke(ctx, color, 2.4);
+    seg(ctx, x - 17, y - 11, x + 17, y - 11);      // 长板 = 正极
+    seg(ctx, x - 9, y + 11, x + 9, y + 11);        // 短板 = 负极
+    seg(ctx, x, y - 24, x, y - 11);
+    seg(ctx, x, y + 11, x, y + 24);
+  }
+  /** 电流计（指针居中、双向偏）：frac ∈ [−1,1] */
+  function galvo(ctx, x, y, r, frac, color, fs2) {
+    stroke(ctx, THEME.wire, 1.6);
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+    text(ctx, 'G', x, y + r + 11 * fs2, { color: THEME.grey, size: 12 * fs2, align: 'center' });
+    var a = -Math.PI / 2 + clamp(frac, -1, 1) * 1.05;
+    var col = color || THEME.gold;
+    stroke(ctx, col, 2.2);
+    seg(ctx, x, y + r * 0.55, x + Math.cos(a) * r * 0.82, y + r * 0.55 + Math.sin(a) * r * 0.82);
+    dot(ctx, x, y + r * 0.55, 2.4, col, true);
+    /* 中央刻度 */
+    stroke(ctx, THEME.grey, 1);
+    seg(ctx, x, y - r * 0.25, x, y - r * 0.05);
+  }
+  /** 电压表（圆 + V） */
+  function voltmeter(ctx, x, y, r, v, fs2, color) {
+    stroke(ctx, THEME.wire, 1.6);
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+    text(ctx, 'V', x, y - r * 0.42, { color: THEME.grey, size: 13 * fs2, align: 'center', weight: 700 });
+    if (v !== undefined) {
+      text(ctx, v, x, y + r * 0.48, { color: color || THEME.green, size: 12 * fs2, align: 'center', weight: 700 });
+    }
+  }
+  /** 电阻（矩形） */
+  function resistor(ctx, x, y, w, h, name, fs2) {
+    stroke(ctx, THEME.wire, 1.6);
+    ctx.strokeRect(x - w / 2, y - h / 2, w, h);
+    text(ctx, name || 'R', x, y, { color: THEME.grey, size: 12 * fs2, align: 'center' });
+  }
+  /** 小灯泡：亮 = 亮度 alpha、久 = 光晕 */
+  function bulb(ctx, x, y, r, bright, color) {
+    color = color || THEME.gold;
+    ctx.globalAlpha = 0.25 + 0.75 * clamp(bright, 0, 1);
+    dot(ctx, x, y, r, color, true);
+    ctx.shadowColor = color; ctx.shadowBlur = 14 * clamp(bright, 0, 1);
+    dot(ctx, x, y, r * 0.62, color, true);
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+    stroke(ctx, THEME.grey, 1.2);
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  /* =====================================================================
+     场景几何
+     ===================================================================== */
+  function baseScene(W, H, st) {
+    var sc = st.scene || 'model';
+    var hasStrip = (sc === 'circuit' || sc === 'sharing' || sc === 'safety');
+    var split = hasStrip ? 0.60 : 0;
+    var mainH = split ? Math.round(H * split) : H;
+    var stripTop = split ? mainH + 6 : H;
+    var stripH = H - stripTop - 4;
+    var S = { ctx: null, W: W, H: H, scene: sc, mainH: mainH, stripTop: stripTop, stripH: stripH, hasStrip: split > 0 };
+    if (hasStrip) {
+      S.stripL = PADL; S.stripR = W - PADR;
+      S.stripW = S.stripR - S.stripL;
+      S.stripXf = function (u) { return S.stripL + clamp(u, 0, 1) * S.stripW; };
+      S.stripInvU = function (px) { return clamp((px - S.stripL) / S.stripW, 0, 1); };
+    }
+    /* 电路虚拟坐标（900 × 260）→ 画布映射 */
+    S.map = function (vw, vh) {
+      var s = Math.min((S.W - 18) / vw, (S.mainH - 12) / vh, 1.25);
+      var ox = (S.W - vw * s) / 2, oy = (S.mainH - vh * s) / 2;
+      return {
+        s: s,
+        x: function (vx) { return ox + vx * s; },
+        y: function (vy) { return oy + vy * s; },
+        f: clamp(s, 0.80, 1.15)      // 字号缩放（下限 0.80：窄屏也不至于看不清）
+      };
+    };
+    /* 三个常用分区 */
+    S.half = function (frac) {
+      var w = S.W - PADL - PADR;
+      return { x0: PADL, x1: PADL + w * frac, x2: PADL + w * frac + 26, x3: S.W - PADR };
+    };
+    return S;
+  }
+
+  /* =====================================================================
+     场景一 · model：电容器模型（水容器 → 拆开 → 模型外推）
+     ===================================================================== */
+  function drawModel(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var part = S.half(0.5);
+    if (st.show.intro) { drawModelIntro(S, st, part); return; }
+    if (st.show.extrap) { drawModelExtrap(S, st, part); return; }
+    drawModelCoil(S, st, part);
+  }
+
+  /* 1.1 水容器 ↔ 电容器（环节①） */
+  function drawModelIntro(S, st, part) {
+    var ctx = S.ctx, H = S.H;
+    var cx1 = (part.x0 + part.x1) / 2, cx2 = (part.x2 + part.x3) / 2;
+    var cy = H * 0.50, sc = Math.max(1, Math.min(1.5, H / 560));
+
+    /* 左：装水的容器 */
+    var cw = 150 * sc, ch = 190 * sc;
+    stroke(ctx, THEME.white, 2.4);
+    seg(ctx, cx1 - cw / 2, cy - ch / 2, cx1 - cw / 2, cy + ch / 2);
+    seg(ctx, cx1 + cw / 2, cy - ch / 2, cx1 + cw / 2, cy + ch / 2);
+    seg(ctx, cx1 - cw / 2, cy + ch / 2, cx1 + cw / 2, cy + ch / 2);
+    ctx.fillStyle = THEME.goldFill;
+    ctx.fillRect(cx1 - cw / 2 + 2, cy + ch * 0.02, cw - 4, ch * 0.48);
+    label(ctx, '水', cx1, cy + ch * 0.26, THEME.gold, 15 * sc);
+    text(ctx, '容器装水', cx1, cy - ch / 2 - 24 * sc, { color: THEME.white, size: 15 * sc, align: 'center', weight: 600 });
+
+    /* 中：等号 */
+    text(ctx, '＝', (part.x1 + part.x2) / 2, cy, { color: THEME.grey, size: 34 * sc, align: 'center', weight: 700 });
+
+    /* 右：装电荷的电容器 */
+    var pw = 150 * sc, gap = 34 * sc;
+    capPlates(ctx, cx2, cy - gap, cy + gap, pw / 2, THEME.white, 5);
+    for (var i = 0; i < 5; i++) {
+      var xx = cx2 - pw / 2 + 14 * sc + i * (pw - 28 * sc) / 4;
+      text(ctx, '＋', xx, cy - gap - 16 * sc, { color: THEME.red, size: 14 * sc, align: 'center' });
+      text(ctx, '－', xx, cy + gap + 16 * sc, { color: THEME.blue, size: 14 * sc, align: 'center' });
+    }
+    label(ctx, '电荷', cx2, cy, THEME.gold, 16 * sc);
+    text(ctx, '电容器装电荷', cx2, cy - gap - 46 * sc, { color: THEME.white, size: 15 * sc, align: 'center', weight: 600 });
+
+    /* 主问题 */
+    text(ctx, '电，究竟装在哪里？怎么"装进去"、又怎么"倒出来"？', S.W / 2, H - 34 * sc,
+      { color: THEME.yellow, size: 18 * sc, align: 'center', weight: 700 });
+  }
+
+  /* 1.2 拆开卷绕的薄膜电容器（环节②） */
+  function drawModelCoil(S, st, part) {
+    var ctx = S.ctx, H = S.H;
+    var u = st.unfold;
+    var w = part.x1 - part.x0, h = H * 0.78;
+    var cx = (part.x0 + part.x1) / 2, cy = H * 0.47;
+    var R = Math.min(w, h) * 0.40;
+    /* 三层：铝箔（白）／薄膜（灰）／铝箔（白） */
+    var layers = [
+      { c: THEME.white, dy: -1.0 },
+      { c: THEME.grey, dy: 0.0 },
+      { c: THEME.white, dy: 1.0 }
+    ];
+    var L = w * 0.80;
+    for (var k = 0; k < layers.length; k++) {
+      var ly = layers[k];
+      stroke(ctx, ly.c, k === 1 ? 2.0 : 2.6);
+      ctx.beginPath();
+      for (var i = 0; i <= 140; i++) {
+        var s01 = i / 140;
+        var turns = 3.0;
+        var r = R * (0.16 + 0.84 * s01) + ly.dy * 7;
+        var a = s01 * turns * Math.PI * 2 + k * 2.1;
+        var px = cx + r * Math.cos(a) * 0.92;
+        var py = cy + r * Math.sin(a) * 0.92;
+        var qx = cx - L / 2 + L * s01;
+        var qy = cy + ly.dy * 26 - 26;
+        var X = px * (1 - u) + qx * u, Y = py * (1 - u) + qy * u;
+        if (i === 0) { ctx.moveTo(X, Y); } else { ctx.lineTo(X, Y); }
+      }
+      ctx.stroke();
+    }
+    if (u > 0.86) {
+      var x1 = cx - L / 2, x2 = cx + L / 2;
+      text(ctx, '铝箔（极板）', x2 + 8, cy - 52, { color: THEME.white, size: 12.5 });
+      text(ctx, '薄膜（电介质）', x2 + 8, cy - 26, { color: THEME.grey, size: 12.5 });
+      text(ctx, '铝箔（极板）', x2 + 8, cy, { color: THEME.white, size: 12.5 });
+      dash(ctx, [7, 5]); stroke(ctx, THEME.ghost, 1.2);
+      seg(ctx, x1, cy - 52, x2 + 4, cy - 52);
+      seg(ctx, x1, cy - 26, x2 + 4, cy - 26);
+      seg(ctx, x1, cy, x2 + 4, cy);
+      nodash(ctx);
+    } else {
+      text(ctx, '拖「拆开」把卷绕的薄膜摊平', cx, cy + R * 0.92 + 26, { color: THEME.grey, size: 12.5, align: 'center' });
+      text(ctx, '白线 = 铝箔（极板）　灰线 = 薄膜（电介质）', cx, cy - R * 0.92 - 26,
+        { color: THEME.grey, size: 12, align: 'center' });
+    }
+
+    /* 右：三种实物，形状不同、模型一样 */
+    var x0 = part.x2 + 12, kx = (S.W - PADR - x0) / 3;
+    var names = ['卷绕的薄膜电容器', '电解电容器', '可变电容器'];
+    for (var j = 0; j < 3; j++) {
+      var bx = x0 + j * kx + kx / 2, by = H * 0.44, rr = Math.min(kx, H * 0.34) * 0.34;
+      stroke(ctx, THEME.white, 2.2);
+      if (j === 0) {
+        for (var m = 0; m < 4; m++) {
+          ctx.beginPath(); ctx.arc(bx, by, rr * (0.42 + m * 0.19), 0, Math.PI * 2); ctx.stroke();
+        }
+        seg(ctx, bx + rr, by, bx + rr * 1.9, by);
+      } else if (j === 1) {
+        ctx.strokeRect(bx - rr, by - rr * 1.15, rr * 2, rr * 2.3);
+        stroke(ctx, THEME.grey, 1.6);
+        seg(ctx, bx - rr * 0.7, by - rr * 0.5, bx + rr * 0.7, by - rr * 0.5);
+        seg(ctx, bx - rr * 0.7, by, bx + rr * 0.7, by);
+        text(ctx, '＋', bx - rr - 10, by - rr, { color: THEME.red, size: 12 });
+        seg(ctx, bx, by - rr * 1.15, bx, by - rr * 1.8);
+      } else {
+        for (var n = 0; n < 4; n++) {
+          seg(ctx, bx - rr, by - rr * 0.8 + n * rr * 0.5, bx + rr * 0.55, by - rr * 0.8 + n * rr * 0.5);
+          seg(ctx, bx - rr * 0.55, by - rr * 0.55 + n * rr * 0.5, bx + rr, by - rr * 0.55 + n * rr * 0.5);
+        }
+      }
+      text(ctx, names[j], bx, by + rr * 2.1, { color: THEME.grey, size: 11.5, align: 'center' });
+    }
+    text(ctx, '形状千变万化，模型只有一个：两个极板 ＋ 电介质', S.W - PADR, PADT + 2,
+      { color: THEME.yellow, size: 13.5, align: 'right', weight: 600 });
+  }
+
+  /* 1.3 模型外推：任何两个彼此绝缘又相距很近的导体 */
+  function drawModelExtrap(S, st, part) {
+    var ctx = S.ctx, H = S.H;
+    var cx = (part.x0 + part.x1) / 2, cy = H * 0.46;
+    var pw = Math.min(part.x1 - part.x0, H * 0.9) * 0.62;
+    var gapMax = 92, gapMin = 10;
+    var gap = gapMin + (gapMax - gapMin) * clamp((st.d - 0.001) / 0.019, 0, 1);
+
+    /* 上下两块导体（极板） */
+    capPlates(ctx, cx, cy - gap / 2, cy + gap / 2, pw / 2, THEME.white, 5);
+    /* 电介质（中间） */
+    ctx.fillStyle = THEME.greyFill;
+    ctx.fillRect(cx - pw / 2, cy - gap / 2, pw, gap);
+    text(ctx, '绝缘（空气也是电介质）', cx, cy, { color: THEME.grey, size: 11.5, align: 'center' });
+    /* 电场线 */
+    if (gap > 16) {
+      for (var i = 0; i < 5; i++) {
+        var xx = cx - pw / 2 + pw * (i + 0.5) / 5;
+        arrow(ctx, xx, cy - gap / 2 + 3, xx, cy + gap / 2 - 3, THEME.wireSoft, 1.2, 5);
+      }
+    }
+    S.hits.push({ id: 'dragD', x: cx - pw / 2, y: cy - gap / 2 - 16, w: pw, h: 32 });
+    ctx.fillStyle = THEME.green;
+    ctx.fillRect(cx - 5, cy - gap / 2 - 5, 10, 10);
+    /* d 标尺（绿） */
+    stroke(ctx, THEME.green, 2.2);
+    darrow(ctx, cx + pw / 2 + 22, cy - gap / 2, cx + pw / 2 + 22, cy + gap / 2, THEME.green, 2, 6);
+    label(ctx, 'd = ' + (st.d * 1000).toFixed(0) + ' mm', cx + pw / 2 + 30, cy, THEME.green, 12, 'left');
+
+    /* 两个引线 + 正负号：靠近 = 电容器 */
+    stroke(ctx, THEME.white, 2.4);
+    seg(ctx, cx - pw / 2, cy - gap / 2, cx - pw / 2 - 34, cy - gap / 2);
+    seg(ctx, cx + pw / 2, cy + gap / 2, cx + pw / 2 + 34, cy + gap / 2);
+    text(ctx, '＋', cx - pw / 2 - 12, cy - gap / 2 - 16, { color: THEME.red, size: 15, align: 'center' });
+    text(ctx, '－', cx + pw / 2 + 12, cy + gap / 2 + 16, { color: THEME.blue, size: 15, align: 'center' });
+
+    S.dragHandlers = {
+      dragD: function (st2, px, py) {
+        var gpx = clamp(2 * (cy - py), gapMin, gapMax);
+        st2.d = 0.001 + 0.019 * (gpx - gapMin) / (gapMax - gapMin);
+      }
+    };
+    /* 电容大小随 d 变化（对数条） */
+    var C0 = P.plateC(0.02, st.d, 1);
+    var bx = cx - 90, by = cy + gap / 2 + 54;
+    stroke(ctx, THEME.wireSoft, 1);
+    seg(ctx, bx, by, bx + 180, by);
+    var f = clamp((Math.log10(C0 * 1e12) - Math.log10(5)) / (Math.log10(300) - Math.log10(5)), 0, 1);
+    stroke(ctx, THEME.yellow, 2.6);
+    seg(ctx, bx, by, bx + 180 * f, by);
+    label(ctx, 'C ≈ ' + cfmt(C0) + '（S = 0.02 m²）', bx, by + 16, THEME.yellow, 12, 'left');
+
+    /* 其余形状 */
+    var x2 = part.x2 + 14, w2 = S.W - PADR - x2;
+    var c2x = x2 + w2 / 2;
+    text(ctx, '换成别的形状，照样成立', c2x, PADT + 12, { color: THEME.grey, size: 12.5, align: 'center' });
+    /* 两个金属球（靠近） */
+    var r1 = Math.min(w2 * 0.16, H * 0.10);
+    glowDot(ctx, c2x - r1 - 6, H * 0.42, r1, THEME.white, 0);
+    glowDot(ctx, c2x + r1 + 6, H * 0.42, r1, THEME.white, 0);
+    text(ctx, '＋', c2x - r1 - 6, H * 0.42, { color: THEME.red, size: 15, align: 'center' });
+    text(ctx, '－', c2x + r1 + 6, H * 0.42, { color: THEME.blue, size: 15, align: 'center' });
+    text(ctx, '两个靠近的金属球', c2x, H * 0.42 + r1 + 22, { color: THEME.grey, size: 11.5, align: 'center' });
+    /* 一根导线剪一刀 */
+    stroke(ctx, THEME.white, 3);
+    seg(ctx, c2x - r1 * 2.2, H * 0.72, c2x - 8, H * 0.72);
+    seg(ctx, c2x + 8, H * 0.72, c2x + r1 * 2.2, H * 0.72);
+    dash(ctx, [5, 5]); stroke(ctx, THEME.grey, 1.2);
+    seg(ctx, c2x, H * 0.72 - 20, c2x, H * 0.72 + 20);
+    nodash(ctx);
+    text(ctx, '一根导线中间剪一刀', c2x, H * 0.72 + 32, { color: THEME.grey, size: 11.5, align: 'center' });
+    text(ctx, '彼此绝缘 ＋ 相距很近 ⇒ 就是一个电容器', S.W / 2, H - 22,
+      { color: THEME.yellow, size: 16, align: 'center', weight: 700 });
+  }
+
+  /* =====================================================================
+     电路绘制（circuit / practice 共用）· 虚拟坐标 900 × 260
+     ===================================================================== */
+  var CV = {
+    xL: 60, xP: 310, xG: 400, xR: 520, xC: 640, xRt: 760,
+    yT1: 70, yB1: 190, yM: 130, yBot: 232, yV: 186, xV1: 606, xV2: 682
+  };
+  /**
+   * 画充放电电路
+   *   M：映射对象（S.map）
+   *   o：{ sw, U0, I, U, showCurrent, compact, marks:{t1:bool}, voltLabel }
+   */
+  function drawCircuit(S, M, o) {
+    var ctx = S.ctx, f = M.f;
+    var X = M.x, Y = M.y;
+    var sw = o.sw, wc = THEME.wire;
+    var chg = (sw === 1), dis = (sw === 2);
+
+    /* 导线：主回路 */
+    stroke(ctx, wc, 2.0);
+    seg(ctx, X(CV.xP), Y(CV.yM), X(CV.xRt), Y(CV.yM));            // 上支路 P → 右端
+    seg(ctx, X(CV.xRt), Y(CV.yM), X(CV.xRt), Y(CV.yBot));          // 下行
+    seg(ctx, X(CV.xRt), Y(CV.yBot), X(CV.xL), Y(CV.yBot));         // 底轨
+    seg(ctx, X(CV.xL), Y(CV.yBot), X(CV.xL), Y(CV.yB1));           // 回到电池负极
+    /* 左轨 + 电池 */
+    seg(ctx, X(CV.xL), Y(CV.yT1), X(CV.xL), Y(CV.yM - 24));
+    seg(ctx, X(CV.xL), Y(CV.yM + 24), X(CV.xL), Y(CV.yB1));
+    batterySym(ctx, X(CV.xL), Y(CV.yM), THEME.white);
+    /* 触点 1 / 2 的引线 */
+    seg(ctx, X(CV.xL), Y(CV.yT1), X(CV.xP - 60), Y(CV.yT1));
+    seg(ctx, X(CV.xL), Y(CV.yB1), X(CV.xP - 60), Y(CV.yB1));
+    /* 触点 */
+    dot(ctx, X(CV.xP - 60), Y(CV.yT1), 3, THEME.white, true);
+    dot(ctx, X(CV.xP - 60), Y(CV.yB1), 3, THEME.white, true);
+    /* 刀（单刀双掷） */
+    var bx = X(CV.xP - 60), by = Y(CV.yT1), cx2 = X(CV.xP - 60), cy2 = Y(CV.yB1);
+    var px = X(CV.xP), py = Y(CV.yM);
+    var tx = chg ? bx : (dis ? cx2 : px), ty = chg ? by : (dis ? cy2 : py - 78);
+    stroke(ctx, THEME.white, 2.6);
+    seg(ctx, px, py, tx, ty);
+    dot(ctx, px, py, 3.2, THEME.white, true);
+    stroke(ctx, THEME.grey, 1.2);
+    seg(ctx, X(CV.xP - 74), Y(CV.yM), X(CV.xP - 46), Y(CV.yM));
+    /* 电流计 G */
+    var frac = clamp((o.I || 0) / (o.iMax || 1), -1, 1);
+    galvo(ctx, X(CV.xG), Y(CV.yM), 26 * f, frac, THEME.gold, f);
+    /* 限流电阻 R */
+    resistor(ctx, X(CV.xR), Y(CV.yM), 58, 24, 'R', f);
+    /* 电容器 C */
+    capSymbol(ctx, X(CV.xC), Y(CV.yM), 8, 26, THEME.white, 5);
+    /* 电压表 V（并联在 C 两端） */
+    stroke(ctx, wc, 2.0);
+    seg(ctx, X(CV.xV1), Y(CV.yM), X(CV.xV1), Y(CV.yV));
+    seg(ctx, X(CV.xV2), Y(CV.yM), X(CV.xV2), Y(CV.yV));
+    seg(ctx, X(CV.xV1), Y(CV.yV), X(CV.xC - 26), Y(CV.yV));
+    seg(ctx, X(CV.xC + 26), Y(CV.yV), X(CV.xV2), Y(CV.yV));
+    voltmeter(ctx, X(CV.xC), Y(CV.yV), 21 * f, o.voltLabel, f, THEME.green);
+
+    /* 标注 */
+    text(ctx, 'E = ' + num(o.U0, 1) + ' V', X(CV.xL) - 30 * f, Y(CV.yM), { color: THEME.grey, size: 12 * f, align: 'right' });
+    text(ctx, '1', X(CV.xP - 60) - 12, Y(CV.yT1) - 12, { color: chg ? THEME.green : THEME.grey, size: 13 * f, weight: 700 });
+    text(ctx, '2', X(CV.xP - 60) - 12, Y(CV.yB1) + 12, { color: dis ? THEME.green : THEME.grey, size: 13 * f, weight: 700 });
+    text(ctx, sw === 0 ? 'S（断开）' : 'S', X(CV.xP) + 8, Y(CV.yM) - 62, { color: THEME.grey, size: 12 * f });
+    text(ctx, 'C = ' + cfmt(o.C), X(CV.xC) + 4 * f, Y(CV.yM) - 34 * f, { color: THEME.white, size: 12 * f, align: 'left' });
+    if (o.marks && o.marks.t1) {
+      text(ctx, 't₁ 时刻：电流向左', X(CV.xG), Y(CV.yBot) + 16, { color: THEME.gold, size: 12 * f, align: 'center' });
+    } else if (o.marks && o.marks.t2) {
+      text(ctx, 't₂ 时刻：电流向右', X(CV.xG), Y(CV.yBot) + 16, { color: THEME.gold, size: 12 * f, align: 'center' });
+    }
+
+    /* 电流方向（金）：充电时电源 → 电容器；放电时反过来 */
+    if (o.showCurrent && sw !== 0) {
+      var dir = chg ? 1 : -1;
+      var yA = Y(CV.yM), yB2 = Y(CV.yBot);
+      arrow(ctx, X(360), yA, X(360) + 42 * dir, yA, THEME.gold, 2.2, 7);
+      arrow(ctx, X(700) - 21 * dir, yB2, X(700) + 21 * dir, yB2, THEME.gold, 2.2, 7);
+      text(ctx, chg ? '充电电流' : '放电电流', X(360), yA - 20 * f, { color: THEME.gold, size: 12 * f, align: 'center' });
+    }
+    /* 极板带电（金：电荷） */
+    var nq = Math.round(clamp((o.Q || 0) / (o.Qmax || 1), 0, 1) * 8);
+    for (var i = 0; i < nq; i++) {
+      var yy = Y(CV.yM) - 26 + 6 + i * 6;
+      dot(ctx, X(CV.xC) - 14, yy, 2.2, THEME.gold, true);
+      dot(ctx, X(CV.xC) + 14, yy, 2.2, THEME.gold, true);
+    }
+  }
+
+  /* =====================================================================
+     场景二 · circuit：充放电（教材图 10.4-1）
+     ===================================================================== */
+  function drawCircuitScene(S, st) {
+    var ctx = S.ctx;
+    ctx.clearRect(0, 0, S.W, S.H);
+    var D = P.demoState(st.sw, st.t, st.U0, P.DEMO_C, P.DEMO_R,
+      st.vm === 'student' ? P.DEMO_RV_STUDENT : P.DEMO_RV_DIGITAL);
+    var M = S.map(880, 268);
+    drawCircuit(S, M, {
+      sw: st.sw, U0: st.U0, I: D.I, U: D.U, C: P.DEMO_C, iMax: D.iMax,
+      Q: D.Q, Qmax: P.qTotal(P.DEMO_C, st.U0),
+      showCurrent: true, voltLabel: ufmt(D.U)
+    });
+    /* 三个要盯住的地方（第 4 步） */
+    if (st.show.leads) {
+      var f = M.f;
+      var pts = [
+        { x: M.x(CV.xC), y: M.y(CV.yV) - 34 * f, t: '① 电压表读数' },
+        { x: M.x(CV.xG), y: M.y(CV.yM) - 34 * f, t: '② 电流计指针' },
+        { x: M.x(CV.xC), y: M.y(CV.yBot) + 22 * f, t: '③ 电压最大时，电流是多少？' }
+      ];
+      for (var i = 0; i < pts.length; i++) {
+        text(ctx, pts[i].t, pts[i].x, pts[i].y, { color: THEME.yellow, size: 12.5, align: 'center', weight: 600 });
+      }
+    }
+    if (st.show.hold) {
+      text(ctx, '断开电源后：只有电压表这条"隐藏回路"', S.W / 2, S.mainH - 14,
+        { color: THEME.yellow, size: 13.5, align: 'center', weight: 600 });
+    }
+    drawCircuitStrip(S, st, D);
+  }
+
+  /** U–t（绿）与 I–t（金）两条曲线，共用 t 轴 */
+  function drawCircuitStrip(S, st, D) {
+    var ctx = S.ctx;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, S.stripTop, S.W, S.stripH); ctx.clip();
+    panel(ctx, 0, S.stripTop, S.W, S.stripH);
+    var top = S.stripTop + 12, bot = S.stripTop + S.stripH - 16;
+    var mid = (top + bot) / 2;
+    var L = S.stripL, R = S.stripR;
+    var U0 = st.U0, T = P.DEMO_TSPAN, iMax = D.iMax;
+    var showCurves = !!st.show.curves;
+
+    /* 网格与轴 */
+    stroke(ctx, THEME.wireSoft, 1);
+    seg(ctx, L, mid, R, mid);
+    seg(ctx, L, top, L, bot);
+    var g;
+    for (g = 1; g <= 7; g++) {
+      var gx = L + (R - L) * g / 8;
+      seg(ctx, gx, top, gx, bot);
+      text(ctx, num(T * g / 8, 1), gx, bot + 10, { color: THEME.grey, size: 11, align: 'center' });
+    }
+    text(ctx, 't / s', R, bot + 10, { color: THEME.grey, size: 11, align: 'right' });
+    text(ctx, 'U（绿，上轴）／ I（金，中轴）', L, S.stripTop + 4, { color: THEME.grey, size: 11 });
+    /* U 轴刻度（绿） */
+    stroke(ctx, THEME.green, 1);
+    seg(ctx, L, top, L, mid);
+    text(ctx, num(U0, 1) + ' V', L - 6, top, { color: THEME.green, size: 11, align: 'right' });
+    /* I 轴刻度（金） */
+    text(ctx, '±' + ifmt(iMax), L - 6, mid - 14, { color: THEME.gold, size: 11, align: 'right' });
+    stroke(ctx, THEME.gold, 1);
+    seg(ctx, L, mid - 10, L + 6, mid - 10);
+    seg(ctx, L, mid + 10, L + 6, mid + 10);
+
+    var yU = function (u) { return bot - (bot - top) * clamp(u / U0, -0.05, 1.2); };
+    var yI = function (i) { return mid - (mid - top) * clamp(i / iMax, -1.1, 1.1); };
+
+    /* 曲线 */
+    var drawCurve = function (fn, yf, color) {
+      stroke(ctx, color, 2.6);
+      ctx.beginPath();
+      for (var i = 0; i <= 160; i++) {
+        var tt = T * i / 160, vv = fn(tt);
+        var X = L + (R - L) * i / 160, Y = yf(vv);
+        if (i === 0) { ctx.moveTo(X, Y); } else { ctx.lineTo(X, Y); }
+      }
+      ctx.stroke();
+    };
+    if (showCurves || true) {
+      /* 曲线始终画出，但只有 show.curves 的步骤标注对比 */
+      drawCurve(function (t) { return D.U * (t <= st.t ? 1 : 0.28); }, yU, 'rgba(131,193,103,0.30)');
+      drawCurve(function (t) { return 0; }, yI, 'rgba(0,0,0,0)');
+      /* 真正的曲线（整条过程） */
+      var fU, fI;
+      if (st.sw === 1) {
+        fU = function (t) { return P.chargeU(st.U0, t, D.tau); };
+        fI = function (t) { return P.chargeI(st.U0, P.DEMO_R, t, D.tau); };
+      } else if (st.sw === 2) {
+        fU = function (t) { return P.dischargeU(st.U0, t, D.tau); };
+        fI = function (t) { return P.dischargeI(st.U0, P.DEMO_R, t, D.tau); };
+      } else {
+        fU = function (t) { return P.leakU(st.U0, t, st.vm === 'student' ? P.DEMO_RV_STUDENT : P.DEMO_RV_DIGITAL, P.DEMO_C); };
+        fI = function (t) { return 0; };
+      }
+      stroke(ctx, THEME.green, 2.6);
+      ctx.beginPath();
+      for (var i2 = 0; i2 <= 200; i2++) {
+        var t2 = T * i2 / 200;
+        var X2 = L + (R - L) * i2 / 200, Y2 = yU(fU(t2));
+        if (i2 === 0) { ctx.moveTo(X2, Y2); } else { ctx.lineTo(X2, Y2); }
+      }
+      ctx.stroke();
+      if (st.sw !== 0) {
+        stroke(ctx, THEME.gold, 2.6);
+        ctx.beginPath();
+        for (var i3 = 0; i3 <= 200; i3++) {
+          var t3 = T * i3 / 200;
+          var X3 = L + (R - L) * i3 / 200, Y3 = yI(fI(t3));
+          if (i3 === 0) { ctx.moveTo(X3, Y3); } else { ctx.lineTo(X3, Y3); }
+        }
+        ctx.stroke();
+      } else {
+        text(ctx, 'I ≈ 0（只有电压表的微弱电流）', (L + R) / 2, mid - 12, { color: THEME.gold, size: 12, align: 'center' });
+      }
+    }
+    /* 时间游标 */
+    var cxp = L + (R - L) * clamp(st.t / T, 0, 1);
+    dash(ctx, [5, 5]); stroke(ctx, THEME.white, 1.2);
+    seg(ctx, cxp, top, cxp, bot);
+    nodash(ctx);
+    glowDot(ctx, cxp, yU(D.U), 4.6, THEME.green, 8);
+    if (st.sw !== 0) { glowDot(ctx, cxp, yI(D.I), 4.6, THEME.gold, 8); }
+
+    /* 一句话对比（只有 show.curves 的步骤） */
+    if (st.show.curves) {
+      var up = (st.sw === 1);
+      text(ctx, up ? '电压 ↑　而　电流 ↓：反步调' : '电压 ↓　电流反向 ↓：一起归零',
+        (L + R) / 2, S.stripTop + 4, { color: THEME.yellow, size: 13, align: 'center', weight: 700 });
+    }
+    ctx.restore();
+  }
+
+  /* =====================================================================
+     场景三 · sharing：平分电荷法（教材图 10.4-4）
+     ===================================================================== */
+  /** 数字电表小框（读数写在框里，不会溢出圆圈） */
+  function meterBox(ctx, cx, cy, w, h, label, value, color) {
+    roundBox(ctx, cx - w / 2, cy - h / 2, w, h, 6, THEME.wire, 1.6);
+    text(ctx, label, cx - w / 2 + 8, cy - h / 2 - 9, { color: THEME.grey, size: 11 });
+    text(ctx, value, cx, cy, { color: color || THEME.green, size: 13, align: 'center', weight: 700 });
+  }
+  /** 单刀开关（闭合/断开） */
+  function knife(ctx, x1, x2, y, closed, color) {
+    stroke(ctx, color || THEME.green, 2.4);
+    seg(ctx, x1, y, x1 + 5, y);
+    seg(ctx, x2 - 5, y, x2, y);
+    if (closed) { seg(ctx, x1 + 5, y, x2 - 5, y); }
+    else { seg(ctx, x1 + 5, y, x2 - 6, y - 16); }
+    dot(ctx, x1 + 5, y, 2.6, color || THEME.green, true);
+    dot(ctx, x2 - 5, y, 2.6, color || THEME.green, true);
+  }
+
+  /* =====================================================================
+     场景三 · sharing：平分电荷法（教材图 10.4-4）
+     只画"当前这一步真正接通的电路"：S₁ 接 1 画电源，接 2 画 B 与 S₂。
+     ===================================================================== */
+  function drawSharing(S, st) {
+    var ctx = S.ctx;
+    ctx.clearRect(0, 0, S.W, S.H);
+    var M = S.map(790, 270), f = M.f, X = M.x, Y = M.y;
+    var Q0 = P.SHARE_C * P.SHARE_U0;
+    var n = st.n;
+    var qa = P.shareQ(Q0, n);                        // A 上的电荷量
+    var qb = (st.s1 === 2 && st.bCharged) ? qa : 0;  // B 上的电荷量
+    var U = qa / P.SHARE_C;
+    var AX = 310, AY1 = 100, AY2 = 134, AW = 62, BX = 620;
+
+    /* ---- A（横向极板）+ 数字电压表 ---- */
+    capPlates(ctx, X(AX), Y(AY1), Y(AY2), AW, THEME.white, 5);
+    text(ctx, 'A', X(AX) - AW - 16, Y((AY1 + AY2) / 2), { color: THEME.white, size: 14, weight: 700 });
+    /* A 的上极板引线 → 左 */
+    seg(ctx, X(AX - AW), Y(AY1), X(215), Y(AY1));
+    /* A 的下极板引线 → 右 → 下 → 底轨 */
+    seg(ctx, X(AX + AW), Y(AY2), X(420), Y(AY2));
+    seg(ctx, X(420), Y(AY2), X(420), Y(250));
+    seg(ctx, X(420), Y(250), X(86), Y(250));
+    /* 电压表（并联在 A 两端） */
+    seg(ctx, X(215), Y(AY1), X(215), Y(206));
+    seg(ctx, X(215), Y(206), X(AX - 62), Y(206));
+    seg(ctx, X(AX + 62), Y(206), X(420), Y(206));
+    meterBox(ctx, X(AX) - 4, Y(206), 118, 36, '数字电压表', ufmt(U), THEME.green);
+    /* A 上的电荷（金） */
+    var nq = Math.round(clamp(qa / Q0, 0, 1) * 9);
+    for (var i = 0; i < nq; i++) {
+      dot(ctx, X(AX - AW + 8 + i * (2 * AW - 16) / 8), Y(AY1) + 8, 2.2, THEME.gold, true);
+    }
+
+    /* ---- S₁ 接 1：电源给 A 充电 ---- */
+    if (st.s1 === 1) {
+      seg(ctx, X(AX - AW), Y(AY1), X(240), Y(AY1));
+      seg(ctx, X(240), Y(AY1), X(240), Y(70));
+      seg(ctx, X(240), Y(70), X(186), Y(70));
+      knife(ctx, X(150), X(186), Y(70), true, THEME.green);
+      seg(ctx, X(150), Y(70), X(86), Y(70));
+      seg(ctx, X(86), Y(70), X(86), Y(114));
+      batterySym(ctx, X(86), Y(138), THEME.white);
+      seg(ctx, X(86), Y(162), X(86), Y(250));
+      text(ctx, 'E = 3 V', X(86) - 12, Y(138), { color: THEME.grey, size: 12 * f, align: 'right' });
+      text(ctx, 'S₁ 接 1（闭合）', X(168), Y(70) - 22, { color: THEME.green, size: 12 * f, align: 'center' });
+      text(ctx, 'B 还没有接进来', X(BX), Y(AY1) - 16, { color: THEME.grey, size: 12 * f, align: 'center' });
+    } else if (st.s1 === 2) {
+      /* ---- S₁ 接 2：B 与 A 并联 ---- */
+      seg(ctx, X(AX - AW), Y(AY1), X(240), Y(AY1));
+      seg(ctx, X(240), Y(AY1), X(240), Y(44));
+      seg(ctx, X(240), Y(44), X(200), Y(44));
+      text(ctx, 'S₁ 从 1 断开', X(190), Y(44), { color: THEME.grey, size: 11.5 * f, align: 'right' });
+      seg(ctx, X(AX + AW), Y(AY1), X(444), Y(AY1));
+      knife(ctx, X(444), X(502), Y(AY1), true, THEME.green);
+      seg(ctx, X(502), Y(AY1), X(BX - AW), Y(AY1));
+      text(ctx, 'S₁ 接 2（闭合）', X(473), Y(AY1) - 22, { color: THEME.green, size: 12 * f, align: 'center' });
+      /* B */
+      capPlates(ctx, X(BX), Y(AY1), Y(AY2), AW, THEME.white, 5);
+      text(ctx, 'B（与 A 相同）', X(BX), Y(AY1) - 46, { color: THEME.white, size: 12 * f, align: 'center' });
+      seg(ctx, X(BX - AW), Y(AY2), X(500), Y(AY2));
+      seg(ctx, X(500), Y(AY2), X(500), Y(250));
+      seg(ctx, X(420), Y(250), X(500), Y(250));
+      var nqb = Math.round(clamp(qb / Q0, 0, 1) * 9);
+      for (var j = 0; j < nqb; j++) {
+        dot(ctx, X(BX - AW + 8 + j * (2 * AW - 16) / 8), Y(AY1) + 8, 2.2, THEME.gold, true);
+      }
+      /* S₂（给 B 放电） */
+      seg(ctx, X(BX + AW), Y(AY1), X(740), Y(AY1));
+      seg(ctx, X(740), Y(AY1), X(740), Y(AY2));
+      seg(ctx, X(740), Y(AY2), X(BX + AW), Y(AY2));
+      knife(ctx, X(740), X(740), Y(AY1), false, st.s2 ? THEME.green : THEME.grey);
+      seg(ctx, X(740), Y(AY1) + 5, X(740), Y(AY2) - 5);
+      if (st.s2) {
+        stroke(ctx, THEME.green, 2.4);
+        seg(ctx, X(740) - 5, Y((AY1 + AY2) / 2), X(740) + 5, Y((AY1 + AY2) / 2));
+      } else {
+        stroke(ctx, THEME.grey, 2.4);
+        seg(ctx, X(740) - 8, Y((AY1 + AY2) / 2) - 10, X(740) + 8, Y((AY1 + AY2) / 2) + 10);
+      }
+      text(ctx, st.s2 ? 'S₂ 闭合：B 正在放干净' : 'S₂ 断开', X(740), Y(AY2) + 20,
+        { color: st.s2 ? THEME.green : THEME.grey, size: 11.5 * f, align: 'center' });
+    } else {
+      seg(ctx, X(AX - AW), Y(AY1), X(240), Y(AY1));
+      text(ctx, 'S₁ 断开（A 悬空）', X(236), Y(AY1) - 18, { color: THEME.grey, size: 12 * f, align: 'right' });
+      text(ctx, '电荷留在极板上，没有回路可以跑', X(BX), Y(AY1) + 16, { color: THEME.grey, size: 12 * f, align: 'center' });
+    }
+
+    /* ---- 一句话 ---- */
+    var msg;
+    if (st.s1 === 1) { msg = '电源给 A 充电，A 上电荷量 Q'; }
+    else if (st.s1 === 2) { msg = 'B 与 A 并联 ⇒ 电荷平分，A 上剩 Q/' + Math.pow(2, n); }
+    else { msg = st.s2 ? 'S₂ 闭合：把 B 放干净，准备下一次平分' : 'A 悬空：电荷留在极板上'; }
+    text(ctx, '第 ' + n + ' 次平分　｜　' + msg, S.W / 2, S.mainH - 12,
+      { color: THEME.yellow, size: 13, align: 'center', weight: 600 });
+    drawSharingStrip(S, st);
+  }
+
+  /** 平分电荷的数据表 + 分半电压柱 */
+  function drawSharingStrip(S, st) {
+    var ctx = S.ctx;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, S.stripTop, S.W, S.stripH); ctx.clip();
+    panel(ctx, 0, S.stripTop, S.W, S.stripH);
+    var n = st.n, i;
+    var rows = P.SHARE_U_MEAS;
+    var nShow = Math.min(n, rows.length - 1);
+    var top = S.stripTop + 10, bot = S.stripTop + S.stripH - 6;
+
+    /* 左：表格 */
+    var tx = S.stripL, colw = [64, 78, 78, 62];
+    var totalW = 0;
+    for (i = 0; i < colw.length; i++) { totalW += colw[i]; }
+    var hd = ['电荷量', '电压实测', '相邻比', 'Q/U'];
+    var yy = top;
+    stroke(ctx, THEME.wireSoft, 1);
+    seg(ctx, tx, yy, tx + totalW, yy);
+    for (i = 0; i < hd.length; i++) {
+      var cxs = tx + (i === 0 ? 0 : colw[0] + (i - 1) * colw[1]) + (i === 0 ? 0 : colw[1] / 2);
+      text(ctx, hd[i], cxs, yy + 12, { color: THEME.grey, size: 11.5, align: i === 0 ? 'left' : 'center' });
+    }
+    for (i = 0; i <= nShow; i++) {
+      var ry = yy + 26 + i * 20;
+      if (ry > bot - 4) { break; }
+      var qs = (i === 0) ? 'Q' : (i === 1 ? 'Q/2' : (i === 2 ? 'Q/4' : (i === 3 ? 'Q/8' : 'Q/16')));
+      text(ctx, qs, tx, ry, { color: THEME.gold, size: 12, align: 'left', weight: 600 });
+      text(ctx, num(rows[i], 3) + ' V', tx + colw[0] + colw[1] / 2, ry, { color: THEME.green, size: 12, align: 'center', weight: 700 });
+      if (i >= 1) {
+        text(ctx, num(P.measRatio(i - 1), 2), tx + colw[0] + colw[1] * 1.5, ry, { color: THEME.yellow, size: 12, align: 'center', weight: 700 });
+        text(ctx, cfmt(P.measC(i)), tx + colw[0] + colw[1] * 2 + colw[2] / 2, ry, { color: THEME.grey, size: 11, align: 'center' });
+      }
+    }
+    stroke(ctx, THEME.wireSoft, 1);
+    seg(ctx, tx, yy + 26 + nShow * 20, tx + totalW, yy + 26 + nShow * 20);
+    text(ctx, '官方实测数据（教参 P54）', tx, bot - 6, { color: THEME.grey, size: 11, align: 'left' });
+
+    /* 右：每次分半的电压柱（等比减半） */
+    var bx0 = tx + totalW + 60;
+    if (bx0 > S.stripR - 120) { bx0 = S.stripR - 120; }
+    var bw = (S.stripR - bx0) / 5 - 8;
+    var baseY = bot - 18, hMax = baseY - top - 18;
+    for (i = 0; i < 5; i++) {
+      var x = bx0 + i * (bw + 8);
+      var hv = hMax * (rows[i] / rows[0]);
+      var on = (i <= nShow);
+      ctx.fillStyle = on ? THEME.goldFill : 'rgba(136,136,136,0.10)';
+      ctx.fillRect(x, baseY - hv, bw, hv);
+      stroke(ctx, on ? THEME.green : THEME.wireSoft, 1.2);
+      ctx.strokeRect(x, baseY - hv, bw, hv);
+      if (on) {
+        text(ctx, num(rows[i], 2), x + bw / 2, baseY - hv - 9, { color: THEME.green, size: 10.5, align: 'center' });
+      }
+    }
+    stroke(ctx, THEME.white, 1.2);
+    seg(ctx, bx0 - 6, baseY, S.stripR, baseY);
+    text(ctx, '电压表读数每次减半 ⇒ U ∝ Q', S.stripR, top + 4, { color: THEME.yellow, size: 12, align: 'right' });
+    ctx.restore();
+  }
+
+  /* =====================================================================
+     场景四 · qu：Q–U 图（斜率 = C）与"同一电压下不同电容器"
+     ===================================================================== */
+  function drawQU(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var P0 = S.half(0.56);
+    var Umax = 3.0, C0 = st.Cn, Qmax = 2200e-6 * Umax;
+
+    /* ---- 左：Q–U 坐标图 ---- */
+    var ox = P0.x0 + 54, oy = H - PADB - 40, w = (P0.x1 - P0.x0) - 84, h = H - PADT - 74;
+    panel(ctx, P0.x0 - 8, PADT - 6, (P0.x1 - P0.x0) + 16, H - PADT - PADB + 10);
+    stroke(ctx, THEME.white, 1.4);
+    seg(ctx, ox, oy, ox + w, oy);
+    seg(ctx, ox, oy, ox, oy - h);
+    head(ctx, ox + w, oy, 0, 7, THEME.white);
+    head(ctx, ox, oy - h, -Math.PI / 2, 7, THEME.white);
+    text(ctx, 'U / V', ox + w, oy + 14, { color: THEME.grey, size: 11.5, align: 'right' });
+    text(ctx, 'Q / C', ox - 8, oy - h + 2, { color: THEME.grey, size: 11.5, align: 'right' });
+    var g;
+    stroke(ctx, THEME.wireSoft, 1);
+    for (g = 1; g <= 3; g++) {
+      var gx = ox + w * g / 3.2, gy = oy - h * g / 3.2;
+      seg(ctx, gx, oy, gx, oy - h);
+      seg(ctx, ox, gy, ox + w, gy);
+    }
+    for (g = 1; g <= 3; g++) {
+      text(ctx, num(Umax * g / 3.2, 1), ox + w * g / 3.2, oy + 12, { color: THEME.grey, size: 11, align: 'center' });
+    }
+    var XU = function (u) { return ox + w * clamp(u / Umax, 0, 1.1); };
+    var YQ = function (q) { return oy - h * clamp(q / Qmax, 0, 1.1); };
+
+    if (st.show.graph) {
+      /* 平分电荷法的五个实验点（2200 µF）：与横轴刻度同工具对齐 */
+      if (Math.abs(C0 - 2200e-6) < 1e-12) {
+        var QQ = P.SHARE_C * P.SHARE_U_MEAS[0];
+        for (var i = 0; i < 5; i++) {
+          var uu = P.SHARE_U_MEAS[i], qq = P.shareQ(QQ, i);
+          glowDot(ctx, XU(uu), YQ(qq), 4.2, THEME.gold, 6);
+        }
+        text(ctx, '平分电荷法实测的五点', XU(0.15), YQ(Qmax * 0.94), { color: THEME.grey, size: 11.5 });
+      }
+      /* 直线 Q = CU */
+      stroke(ctx, THEME.yellow, 2.6);
+      seg(ctx, XU(0), YQ(0), XU(Umax), YQ(C0 * Umax));
+      /* 电流点（黄点，可拖） */
+      var px = XU(st.U), py = YQ(C0 * st.U);
+      glowDot(ctx, px, py, 5.6, THEME.yellow, 10);
+      S.hits.push({ id: 'dragU', x: px - 28, y: py - 28, w: 56, h: 56 });
+      dash(ctx, [6, 5]); stroke(ctx, THEME.ghost, 1.2);
+      seg(ctx, px, py, px, oy);
+      seg(ctx, px, py, ox, py);
+      nodash(ctx);
+      label(ctx, 'C = ' + cfmt(C0), XU(Umax * 0.62), YQ(C0 * Umax * 0.86), THEME.yellow, 13, 'left');
+      S.dragHandlers = {
+        dragU: function (st2, px) {
+          st2.U = clamp((px - ox) / w * Umax, 0, Umax);
+        }
+      };
+      text(ctx, '斜率 = C：C 越大，直线越陡', ox + 8, oy - h - 4, { color: THEME.grey, size: 12 });
+    } else {
+      text(ctx, '同一电压下，三只电容器装的电荷量不同', ox + 8, oy - h - 4, { color: THEME.yellow, size: 13, weight: 600 });
+    }
+
+    /* ---- 右：同电压对照（条 + 定性灯泡） ---- */
+    var rx = P0.x2 + 6, rw = S.W - PADR - rx;
+    panel(ctx, rx, PADT - 6, rw, H - PADT - PADB + 10);
+    var U = st.U;
+    var list = global.VizSteps.CAP_LIST;
+    var qmax2 = list[list.length - 1].F * U;
+    var by0 = PADT + 30, bh = 34, gap2 = 26;
+    text(ctx, '同一电压 U = ' + num(U, 2) + ' V 下：', rx + 12, by0 - 12, { color: THEME.white, size: 13, weight: 600 });
+    for (var j = 0; j < list.length; j++) {
+      var q = list[j].F * U;
+      var yy = by0 + j * (bh + gap2);
+      var len = (rw - 110) * clamp(q / qmax2, 0, 1);
+      var on = (Math.abs(list[j].F - C0) < 1e-12);
+      ctx.fillStyle = on ? THEME.goldFill : THEME.goldSoft;
+      ctx.fillRect(rx + 12, yy, Math.max(2, len), bh);
+      stroke(ctx, on ? THEME.yellow : THEME.wireSoft, 1.4);
+      ctx.strokeRect(rx + 12, yy, Math.max(2, len), bh);
+      text(ctx, list[j].n, rx + rw - 8, yy + bh / 2, { color: on ? THEME.yellow : THEME.grey, size: 12.5, align: 'right', weight: on ? 700 : 400 });
+      text(ctx, 'Q = ' + qfmt(q), rx + 16, yy + bh / 2, { color: THEME.white, size: 12, weight: 600 });
+    }
+    /* 定性灯泡：电容大的更亮、更久 */
+    var lby = by0 + 3 * (bh + gap2) + 4;
+    if (lby < H - 60) {
+      var l1 = list[0].F * U, l2 = list[1].F * U;
+      bulb(ctx, rx + 46, lby, 15, clamp(l1 / (list[1].F * U), 0.2, 1), THEME.gold);
+      text(ctx, '200 µF：暗、短', rx + 70, lby, { color: THEME.grey, size: 11.5 });
+      bulb(ctx, rx + 46, lby + 52, 15, clamp(l2 / (list[1].F * U), 0.2, 1), THEME.gold);
+      text(ctx, '1000 µF：亮、久', rx + 70, lby + 52, { color: THEME.grey, size: 11.5 });
+      text(ctx, '（同一只灯泡放电的定性示意）', rx + 12, lby + 84, { color: THEME.grey, size: 11 });
+    }
+  }
+
+  /* =====================================================================
+     场景五 · plate：平行板电容器（拓展学习）
+     ===================================================================== */
+  function drawPlate(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var P0 = S.half(0.60);
+    var cx = (P0.x0 + P0.x1) / 2, cy = H * 0.40;
+    var halfW = (P0.x1 - P0.x0) * (0.20 + 0.24 * st.S);
+    var gap = 16 + 96 * clamp((st.d - 0.001) / 0.009, 0, 1);
+    var er = st.er;
+    var C = P.plateC(P.discArea(0.16) * st.S, st.d, er);   // 演示用：S 归一化 × 一块 Ø16 cm 的板
+
+    /* 电介质（板间填充） */
+    ctx.fillStyle = er > 1.01 ? 'rgba(240,172,95,0.22)' : THEME.greyFill;
+    ctx.fillRect(cx - halfW, cy - gap / 2, halfW * 2, gap);
+    /* 极板 */
+    capPlates(ctx, cx, cy - gap / 2, cy + gap / 2, halfW, THEME.white, 5);
+    /* 电场线 */
+    for (var i = 0; i < 7; i++) {
+      var xx = cx - halfW + halfW * 2 * (i + 0.5) / 7;
+      if (gap > 14) { arrow(ctx, xx, cy - gap / 2 + 3, xx, cy + gap / 2 - 3, THEME.wireSoft, 1.1, 5); }
+    }
+    text(ctx, er > 1.01 ? '电介质 εr = ' + num(er, 1) : '空气（εr = 1）', cx, cy,
+      { color: er > 1.01 ? THEME.gold : THEME.grey, size: 12, align: 'center' });
+
+    /* d 标尺（绿）+ 拖动把手 */
+    stroke(ctx, THEME.green, 2.2);
+    darrow(ctx, cx + halfW + 20, cy - gap / 2, cx + halfW + 20, cy + gap / 2, THEME.green, 2, 6);
+    label(ctx, 'd = ' + (st.d * 1000).toFixed(1) + ' mm（可拖）', cx, cy - gap / 2 - 24, THEME.green, 12.5, 'center');
+    ctx.fillStyle = THEME.green;
+    ctx.fillRect(cx - 5, cy - gap / 2 - 5, 10, 10);
+    S.hits.push({ id: 'dragD', x: cx - 34, y: cy - gap / 2 - 16, w: 68, h: 32 });
+    /* S 标尺（绿）+ 把手 */
+    stroke(ctx, THEME.green, 2.2);
+    darrow(ctx, cx - halfW, cy + gap / 2 + 30, cx + halfW, cy + gap / 2 + 30, THEME.green, 2, 6);
+    label(ctx, 'S = ' + num(st.S * 100, 0) + '%（正对面积）', cx, cy + gap / 2 + 46, THEME.green, 12);
+    ctx.fillStyle = THEME.green;
+    ctx.fillRect(cx + halfW - 5, cy - gap / 2 - 5, 10, 10);
+    S.hits.push({ id: 'dragS', x: cx + halfW - 18, y: cy - gap / 2 - 18, w: 36, h: 36 });
+
+    S.dragHandlers = {
+      dragD: function (st2, px, py) {
+        var gpx = clamp(2 * (cy - py), 12, 90);
+        st2.d = 0.001 + 0.009 * (gpx - 12) / 78;
+      },
+      dragS: function (st2, px) {
+        var w0 = P0.x1 - P0.x0;
+        st2.S = clamp(((px - cx) / w0 - 0.18) / 0.20, 0.05, 1);
+      }
+    };
+    /* 结论（黄） */
+    text(ctx, 'C = ' + cfmt(C), cx, PADT + 6, { color: THEME.yellow, size: 15, align: 'center', weight: 700 });
+
+    /* ---- 右：数字多用电表 + 边缘效应 ---- */
+    var rx = P0.x2 + 6, rw = S.W - PADR - rx;
+    panel(ctx, rx, PADT - 6, rw, H - PADT - PADB + 10);
+    var mx = rx + 14, mw = rw - 28;
+    text(ctx, '数字多用电表 · 电容挡', mx + 12, PADT + 4, { color: THEME.grey, size: 11 });
+    roundBox(ctx, mx + 8, PADT + 16, mw - 16, 78, 8, THEME.wire, 1.4);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillRect(mx + 20, PADT + 28, mw - 40, 42);
+    text(ctx, cfmt(C), mx + mw / 2, PADT + 49, { color: THEME.yellow, size: 20, align: 'center', weight: 700 });
+    text(ctx, '教材路线的大平行板只有几十 pF，电容挡分辨不出', mx + 6, PADT + 112,
+      { color: THEME.grey, size: 11 });
+    text(ctx, '⇒ 课堂用"叠层式装置"（PVC 25 µm、多层并联）', mx + 6, PADT + 130,
+      { color: THEME.grey, size: 11 });
+
+    /* 边缘效应小图 */
+    var ey = PADT + 168;
+    if (ey + 90 < H) {
+      text(ctx, '板间电场：中部强、边缘弱（匀强电场是理想模型）', mx + 2, ey, { color: THEME.grey, size: 11.5 });
+      var pw2 = Math.min(mw - 20, 190), ph = 46;
+      var ex0 = mx + 8, ey0 = ey + 22;
+      stroke(ctx, THEME.white, 3);
+      seg(ctx, ex0, ey0, ex0 + pw2, ey0);
+      seg(ctx, ex0, ey0 + ph, ex0 + pw2, ey0 + ph);
+      /* 中部密、边缘疏 */
+      for (var k = 0; k < 11; k++) {
+        var fx = ex0 + pw2 * (k + 0.5) / 11;
+        var mid = 1 - Math.abs((k + 0.5) / 11 - 0.5) * 2;
+        if (mid > 0.55) { arrow(ctx, fx, ey0 + 3, fx, ey0 + ph - 3, THEME.wireSoft, 1.2, 4); }
+        else if (mid > 0.22) { seg(ctx, fx, ey0 + 12, fx, ey0 + ph - 12); }
+      }
+      text(ctx, '中部 ≈ 6.25×10⁴ V/m', ex0 + pw2 * 0.42, ey0 + ph + 14, { color: THEME.grey, size: 10.5, align: 'center' });
+      text(ctx, '边缘 ≈ 0.66×10⁴ V/m', ex0 + pw2 + 6, ey0 + ph + 30, { color: THEME.grey, size: 10.5, align: 'right' });
+    }
+  }
+
+  /* =====================================================================
+     场景六 · itarea：I-t 面积 = 电荷量（与 v-t 面积 = 位移同构）
+     ===================================================================== */
+  function drawItArea(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var N = clamp(st.N, 1, 40), mode = st.mode;
+    var T = P.SEN_TSPAN, tau = P.SEN_R * P.SEN_C;
+    var I0 = P.SEN_U0 / P.SEN_R, Q = P.SEN_U0 * P.SEN_C;
+    var fI = function (t) { return I0 * Math.exp(-t / tau); };
+
+    var panels = [
+      { x: PADL, w: (W - PADL - PADR - 40) / 2, title: '匀速直线运动：v–t 图', ylab: 'v / (m·s⁻¹)', color: THEME.white, fill: THEME.greyFill, curve: function () { return 6; }, vmax: 7.2, exactV: 6 * 4, xmax: 4, xlab: 't / s' },
+      { x: PADL + (W - PADL - PADR - 40) / 2 + 40, w: (W - PADL - PADR - 40) / 2, title: '电容器放电：I–t 图', ylab: 'I / A', color: THEME.gold, fill: THEME.goldFill, curve: fI, vmax: I0 * 1.08, exactV: Q, xmax: T, xlab: 't / s' }
+    ];
+    var pt = PADT + 26, ph = H - pt - PADB - 74;
+    for (var i = 0; i < 2; i++) {
+      var pn = panels[i];
+      var ox = pn.x + 52, oy = pt + ph, w = pn.w - 70, h = ph;
+      panel(ctx, pn.x, pt - 22, pn.w, ph + 96);
+      text(ctx, pn.title, pn.x + 8, pt - 30, { color: THEME.white, size: 13.5, weight: 600 });
+      stroke(ctx, THEME.white, 1.4);
+      seg(ctx, ox, oy, ox + w, oy);
+      seg(ctx, ox, oy, ox, oy - h);
+      head(ctx, ox + w, oy, 0, 7, THEME.white);
+      head(ctx, ox, oy - h, -Math.PI / 2, 7, THEME.white);
+      text(ctx, pn.xlab, ox + w, oy + 11, { color: THEME.grey, size: 11, align: 'right' });
+      text(ctx, pn.ylab, ox - 6, oy - h, { color: THEME.grey, size: 11, align: 'right' });
+      var dt = pn.xmax / N, X = function (t) { return ox + w * clamp(t / pn.xmax, 0, 1); };
+      var Y = function (v) { return oy - h * clamp(v / pn.vmax, 0, 1); };
+      /* 小矩形（微元） */
+      var sum = 0;
+      for (var k = 0; k < N; k++) {
+        var x0 = k * dt;
+        var xs = (mode === 'left') ? x0 : (mode === 'right') ? (x0 + dt) : (x0 + dt / 2);
+        var v = pn.curve(xs);
+        sum += v * dt;
+        ctx.fillStyle = pn.fill;
+        ctx.fillRect(X(x0), Y(v), Math.max(1, X(x0 + dt) - X(x0) - 0.8), oy - Y(v));
+        stroke(ctx, pn.color, 0.9);
+        ctx.strokeRect(X(x0), Y(v), Math.max(1, X(x0 + dt) - X(x0) - 0.8), oy - Y(v));
+      }
+      /* 曲线 */
+      stroke(ctx, pn.color, 2.8);
+      ctx.beginPath();
+      for (var m = 0; m <= 200; m++) {
+        var tt = pn.xmax * m / 200;
+        var XX = X(tt), YY = Y(pn.curve(tt));
+        if (m === 0) { ctx.moveTo(XX, YY); } else { ctx.lineTo(XX, YY); }
+      }
+      ctx.stroke();
+      /* 面积读数 */
+      var ay = oy + 26;
+      text(ctx, '小矩形面积和 Σ ≈ ' + (i === 0 ? num(sum, 2) + ' m' : qfmt(sum)),
+        ox, ay, { color: pn.color, size: 13, weight: 700 });
+      text(ctx, i === 0 ? '（面积 ＝ 位移）' : '（面积 ＝ 电荷量）', ox, ay + 18, { color: THEME.yellow, size: 12.5, weight: 600 });
+      text(ctx, '真实值 ' + (i === 0 ? num(pn.exactV, 2) + ' m' : qfmt(pn.exactV)) + '　｜　' +
+        (mode === 'left' ? '左端点' : mode === 'right' ? '右端点' : '中点') + '取点',
+        ox, ay + 34, { color: THEME.grey, size: 11 });
+    }
+    /* 中缝：同构桥 */
+    var midx = S.W / 2;
+    text(ctx, '＝', midx, pt + ph * 0.34, { color: THEME.grey, size: 24, align: 'center', weight: 700 });
+    text(ctx, '面积法：把过程切成小段，每小段看成不变，再加起来', midx, H - 42,
+      { color: THEME.grey, size: 12, align: 'center' });
+    /* 回填主问题 */
+    text(ctx, '回填主问题：电压在涨、电流为什么反而跌？——单位时间内进入极板的电荷越来越少',
+      S.W / 2, H - 18, { color: THEME.yellow, size: 13.5, align: 'center', weight: 600 });
+  }
+
+  /* =====================================================================
+     场景七 · defn：水容器 ↔ 电容器；双胞胎对照表
+     ===================================================================== */
+  function drawDefn(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var P0 = S.half(0.5);
+    var tableH = st.show.table ? Math.min(150, H * 0.32) : 0;
+    var top = PADT + 24, bot = H - PADB - tableH - 14;
+    var h = clamp(st.h, 0.2, 2.0);
+
+    /* ---- 左：水容器（底面积不同） ---- */
+    var lw = [70, 100, 140];
+    var lx0 = P0.x0 + 16;
+    text(ctx, '装水：水深都是 1 cm 时，底面积大的需要的水多', lx0, PADT + 2, { color: THEME.white, size: 13, weight: 600 });
+    var maxH = bot - top - 30;
+    for (var i = 0; i < 3; i++) {
+      var cw = lw[i], cxp = lx0 + 20 + (i * 150);
+      var cH = maxH;
+      stroke(ctx, THEME.white, 2.2);
+      seg(ctx, cxp, top, cxp, top + cH);
+      seg(ctx, cxp + cw, top, cxp + cw, top + cH);
+      seg(ctx, cxp, top + cH, cxp + cw, top + cH);
+      var fillH = cH * (h / 2.0);
+      ctx.fillStyle = THEME.goldFill;
+      ctx.fillRect(cxp + 2, top + cH - fillH, cw - 4, fillH);
+      /* 1 cm 刻度线（虚线 = 参考） */
+      var yOne = top + cH * (1 - 1.0 / 2.0);
+      dash(ctx, [7, 5]); stroke(ctx, THEME.green, 1.4);
+      seg(ctx, cxp - 12, yOne, cxp + cw + 12, yOne);
+      nodash(ctx);
+      text(ctx, '1 cm', cxp + cw + 16, yOne, { color: THEME.green, size: 11 });
+      text(ctx, '水量 ∝ 底面积', cxp + cw / 2, top + cH + 14, { color: THEME.grey, size: 11, align: 'center' });
+      text(ctx, num(cw / 100 * h, 1) + ' 格', cxp + cw / 2, top + cH - fillH - 12, { color: THEME.gold, size: 12, align: 'center', weight: 600 });
+    }
+    var yD = top + maxH * 0.5;
+    stroke(ctx, THEME.grey, 1.6);
+    dash(ctx, [6, 5]);
+    seg(ctx, lx0 - 6, yD, lx0 + 470, yD);
+    nodash(ctx);
+    text(ctx, '水深（可拖）', lx0 - 8, yD - 12, { color: THEME.grey, size: 11, align: 'left' });
+    S.hits.push({ id: 'dragH', x: lx0 - 10, y: yD - 18, w: 470, h: 36 });
+
+    /* ---- 右：电容器（C 不同） ---- */
+    var rx0 = P0.x2 + 10;
+    text(ctx, '装电荷：电压都是 1 V 时，电容大的需要的电荷多', rx0, PADT + 2, { color: THEME.white, size: 13, weight: 600 });
+    var caps = [{ n: '200 µF', F: 200e-6 }, { n: '1000 µF', F: 1000e-6 }, { n: '2200 µF', F: 2200e-6 }];
+    for (var j = 0; j < 3; j++) {
+      var cxp2 = rx0 + 44 + j * 128;
+      var gapP = 16 + (j === 0 ? 8 : j === 1 ? 4 : 0);
+      var wj = 44 + j * 14;
+      capPlates(ctx, cxp2, top + maxH * 0.30, top + maxH * 0.30 + gapP, wj, THEME.white, 4.5);
+      text(ctx, caps[j].n, cxp2, top + maxH * 0.30 - 26, { color: THEME.grey, size: 11.5, align: 'center' });
+      var QQ = caps[j].F * h;
+      var nq = Math.round(clamp(QQ / (2200e-6 * 2.0), 0, 1) * 9);
+      for (var k = 0; k < nq; k++) {
+        dot(ctx, cxp2 - wj / 2 + 6 + k * (wj - 12) / Math.max(1, nq - 1), top + maxH * 0.30 + gapP + 8, 2, THEME.gold, true);
+      }
+      text(ctx, 'Q = ' + qfmt(QQ), cxp2, top + maxH * 0.30 + gapP + 26, { color: THEME.gold, size: 11.5, align: 'center', weight: 600 });
+    }
+    var yV = top + maxH * 0.30 - 44;
+    dash(ctx, [7, 5]); stroke(ctx, THEME.green, 1.4);
+    seg(ctx, rx0 - 6, yV, S.W - PADR, yV);
+    nodash(ctx);
+    text(ctx, '电压 U（可拖）　1 V 刻度（绿虚线）', rx0 - 4, yV - 12, { color: THEME.green, size: 11 });
+    text(ctx, 'U = ' + num(h, 2) + ' V', rx0 - 4, yV + 12, { color: THEME.green, size: 11.5 });
+    S.hits.push({ id: 'dragH', x: rx0 - 10, y: yV - 18, w: Math.max(60, S.W - PADR - rx0), h: 36 });
+
+    S.dragHandlers = {
+      dragH: function (st2, px, py) {
+        st2.h = clamp(2.0 * (top + maxH - py) / maxH, 0.2, 2.0);
+      }
+    };
+    /* 投票（第 16 步） */
+    if (st.show.water && !st.show.table) {
+      var bx1 = S.W / 2 - 150, by1 = H - PADB - 74;
+      var opts = [{ id: 'voteQU', t: 'Q/U' }, { id: 'voteUQ', t: 'U/Q' }];
+      for (var v = 0; v < 2; v++) {
+        var bx = bx1 + v * 160, on = (st.vote === opts[v].id);
+        ctx.fillStyle = on ? THEME.yellowSoft : 'rgba(255,255,255,0.03)';
+        ctx.fillRect(bx, by1, 140, 40);
+        roundBox(ctx, bx, by1, 140, 40, 8, on ? THEME.yellow : THEME.wire, 1.6);
+        text(ctx, '用 ' + opts[v].t + ' 定义', bx + 70, by1 + 20, { color: on ? THEME.yellow : THEME.white, size: 13.5, align: 'center', weight: 600 });
+      }
+      var msg = st.vote === '' ? '先投票，再看教材口径' :
+        '官方口径：比"储存电荷的本领"—— 二者均可；按日常习惯 —— Q/U 更好';
+      text(ctx, msg, S.W / 2, by1 - 14, { color: st.vote === '' ? THEME.grey : THEME.yellow, size: 12.5, align: 'center', weight: 600 });
+    }
+
+    /* 双胞胎对照表 */
+    if (st.show.table) {
+      var ty = H - PADB - tableH + 4;
+      var rows = [
+        ['电场强度（9.3）', 'E ＝ F/q', '检验电荷受的力 F', '检验电荷 q', '电场本身的力的属性'],
+        ['电势（10.1）', 'φ ＝ Ep/q', '检验电荷的电势能 Ep', '检验电荷 q', '电场本身的能的属性'],
+        ['电势差（10.2）', 'U ＝ W/q', '移动电荷做的功 W', '移动的电荷 q', '两点间电场本身的能之差'],
+        ['电容（本节）', 'C ＝ Q/U', '一个极板上的电荷量 Q', '两极板间电势差 U', '电容器本身容纳电荷的本领']
+      ];
+      var cw2 = [128, 108, 168, 128];
+      var tot = 0;
+      for (var c = 0; c < cw2.length; c++) { tot += cw2[c]; }
+      var sx0 = Math.max(PADL, (S.W - tot - 120) / 2), cx0 = sx0;
+      for (var r = 0; r < rows.length; r++) {
+        var ry = ty + r * 24;
+        if (ry > H - 8) { break; }
+        var last = (r === rows.length - 1);
+        var xx = cx0;
+        for (var cc = 0; cc < rows[r].length; cc++) {
+          var col = last ? (cc === 1 ? THEME.yellow : THEME.white) : THEME.grey;
+          text(ctx, rows[r][cc], xx, ry, { color: col, size: last ? 12.5 : 11.5, weight: (last || cc === 1) ? 600 : 400 });
+          xx += cw2[cc];
+        }
+      }
+      text(ctx, '前三次比的是"场"，这一次比的是"元件"', S.W - 10, ty + 12,
+        { color: THEME.yellow, size: 13, align: 'right', weight: 700 });
+    }
+  }
+
+  /* =====================================================================
+     场景八 · safety：单位与数量级；击穿电压与额定电压
+     ===================================================================== */
+  function drawSafety(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    if (st.show.breakdown) { drawSafetyBreakdown(S, st); return; }
+    /* ---- 单位与数量级（对数条） ---- */
+    var lx = PADL + 40, rx = W - PADR - 40, ly = H * 0.42;
+    stroke(ctx, THEME.white, 1.6);
+    seg(ctx, lx, ly, rx, ly);
+    head(ctx, rx, ly, 0, 7, THEME.white);
+    var logMin = -12, logMax = 0.6;
+    var XF = function (lg) { return lx + (rx - lx) * (lg - logMin) / (logMax - logMin); };
+    var d;
+    for (d = -12; d <= 0; d++) {
+      var xx = XF(d);
+      stroke(ctx, THEME.wireSoft, 1);
+      seg(ctx, xx, ly - 7, xx, ly + 7);
+      text(ctx, '10' + sup(d), xx, ly + 20, { color: THEME.grey, size: 11, align: 'center' });
+    }
+    text(ctx, '电容 F', rx, ly - 14, { color: THEME.grey, size: 11.5, align: 'right' });
+    /* 常见量级标记 */
+    var marks = [
+      { F: 1, t: '1 F', s: '每升高 1 V 存进 1 C', up: true, c: THEME.yellow },
+      { F: 2200e-6, t: '2200 µF', s: '平分电荷实验', up: false, c: THEME.gold },
+      { F: 200e-6, t: '200 µF', s: '充放电演示', up: true, c: THEME.gold },
+      { F: 47e-6, t: '47 µF', s: '传感器放电', up: false, c: THEME.gold },
+      { F: 15e-6, t: '15 µF', s: '心脏除颤器', up: true, c: THEME.gold },
+      { F: 1e-12, t: '1 pF', s: '10⁻¹² F', up: false, c: THEME.grey },
+      { F: 40e-12, t: '几十 pF', s: '教材路线的大平行板', up: true, c: THEME.grey }
+    ];
+    for (var i = 0; i < marks.length; i++) {
+      var mk = marks[i], mx = XF(Math.log10(mk.F));
+      stroke(ctx, mk.c, 2);
+      seg(ctx, mx, ly, mx, ly + (mk.up ? -34 : 34));
+      text(ctx, mk.t, mx, ly + (mk.up ? -44 : 44), { color: mk.c, size: 11.5, align: 'center', weight: 600 });
+      text(ctx, mk.s, mx, ly + (mk.up ? -58 : 58), { color: THEME.grey, size: 10.5, align: 'center' });
+    }
+    text(ctx, '1 F = 1 C/V：电容在数值上等于"使两极板间电势差为 1 V 时电容器需要带的电荷量"',
+      W / 2, H - 34, { color: THEME.yellow, size: 14, align: 'center', weight: 700 });
+    text(ctx, '1 µF = 10⁻⁶ F　｜　1 pF = 10⁻¹² F　｜　法拉是个"很大"的单位',
+      W / 2, H - 14, { color: THEME.grey, size: 12.5, align: 'center' });
+  }
+
+  function drawSafetyBreakdown(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    var U = st.Uv, status = P.voltageStatus(U);
+    var cx = W * 0.30, cy = H * 0.30;
+    var cw = 132, ch = 96;
+
+    /* 电容器外形（电解电容器：外壳 + 标注） */
+    ctx.fillStyle = status === 'break' ? THEME.redFill : 'rgba(255,255,255,0.04)';
+    ctx.fillRect(cx - cw / 2, cy - ch / 2, cw, ch);
+    stroke(ctx, status === 'break' ? THEME.red : THEME.white, 3);
+    ctx.strokeRect(cx - cw / 2, cy - ch / 2, cw, ch);
+    text(ctx, '50 V', cx, cy - 16, { color: THEME.white, size: 16, align: 'center', weight: 700 });
+    text(ctx, '额定电压', cx, cy + 6, { color: THEME.grey, size: 11.5, align: 'center' });
+    text(ctx, '2200 µF', cx, cy + 26, { color: THEME.grey, size: 11, align: 'center' });
+    stroke(ctx, THEME.white, 2.4);
+    seg(ctx, cx, cy - ch / 2, cx, cy - ch / 2 - 34);
+    seg(ctx, cx + 26, cy + ch / 2, cx + 26, cy + ch / 2 + 34);
+    text(ctx, '＋', cx - 12, cy - ch / 2 - 20, { color: THEME.red, size: 14, align: 'center' });
+    /* 状态 */
+    if (status === 'break') {
+      stroke(ctx, THEME.red, 2.8);
+      ctx.beginPath();
+      ctx.moveTo(cx - 34, cy + 22);
+      ctx.lineTo(cx - 10, cy - 6);
+      ctx.lineTo(cx + 12, cy + 12);
+      ctx.lineTo(cx + 36, cy - 16);
+      ctx.stroke();
+    } else if (status === 'rated') {
+      roundBox(ctx, cx - cw / 2 - 9, cy - ch / 2 - 9, cw + 18, ch + 18, 10, THEME.yellow, 2);
+    }
+    var stxt = status === 'break' ? '电介质被击穿 —— 电容器损坏'
+      : status === 'rated' ? '已超过额定电压 —— 不安全' : '在额定电压以内 —— 安全';
+    var scol = status === 'break' ? THEME.red : (status === 'rated' ? THEME.yellow : THEME.green);
+    text(ctx, stxt, cx, cy + ch / 2 + 56, { color: scol, size: 15, align: 'center', weight: 700 });
+
+    /* 右侧读数 */
+    var rx = W * 0.60;
+    text(ctx, '加在电容器上的电压', rx, cy - 40, { color: THEME.grey, size: 12.5 });
+    text(ctx, num(U, 0) + ' V', rx, cy - 8, { color: THEME.white, size: 24, align: 'left', weight: 700 });
+    text(ctx, '击穿电压 ' + P.BREAK_U + ' V　＞　额定电压 ' + P.RATED_U + ' V', rx, cy + 30,
+      { color: THEME.grey, size: 13 });
+    text(ctx, '外壳上标的是额定电压', rx, cy + 52, { color: THEME.grey, size: 12.5 });
+    text(ctx, '（课堂设定：击穿取额定的 1.2 倍）', rx, cy + 72, { color: THEME.grey, size: 11 });
+
+    /* ---- 条带：0–80 V 电压轴 ---- */
+    var ax = PADL + 30, bx2 = W - PADR - 30, ay = S.stripTop + S.stripH * 0.58;
+    stroke(ctx, THEME.white, 1.4);
+    seg(ctx, ax, ay, bx2, ay);
+    var XU = function (v) { return ax + (bx2 - ax) * clamp(v / 80, 0, 1); };
+    var g;
+    for (g = 0; g <= 80; g += 10) {
+      seg(ctx, XU(g), ay - 5, XU(g), ay + 5);
+      text(ctx, g + '', XU(g), ay + 18, { color: THEME.grey, size: 10.5, align: 'center' });
+    }
+    text(ctx, '电压 / V', bx2, ay - 14, { color: THEME.grey, size: 11, align: 'right' });
+    stroke(ctx, THEME.green, 2);
+    seg(ctx, XU(P.RATED_U), ay - 30, XU(P.RATED_U), ay + 6);
+    text(ctx, '额定 50 V', XU(P.RATED_U), ay - 42, { color: THEME.green, size: 12, align: 'center' });
+    stroke(ctx, THEME.red, 2);
+    seg(ctx, XU(P.BREAK_U), ay - 30, XU(P.BREAK_U), ay + 6);
+    text(ctx, '击穿 60 V', XU(P.BREAK_U) + 8, ay - 30, { color: THEME.red, size: 12, align: 'left' });
+    glowDot(ctx, XU(U), ay, 6, status === 'break' ? THEME.red : (status === 'rated' ? THEME.yellow : THEME.green), 8);
+    dash(ctx, [5, 5]); stroke(ctx, THEME.ghost, 1.2);
+    seg(ctx, XU(U), ay, XU(U), ay - 22);
+    nodash(ctx);
+    text(ctx, '把电压往上拖', ax, S.stripTop + 8, { color: THEME.grey, size: 11.5 });
+
+    S.hits.push({ id: 'dragUv', x: ax - 10, y: ay - 34, w: bx2 - ax + 20, h: 60 });
+    S.dragHandlers = {
+      dragUv: function (st2, px) { st2.Uv = clamp((px - ax) / (bx2 - ax) * 80, 0, 80); }
+    };
+  }
+
+  /* =====================================================================
+     场景九 · apps：常用电容器与可变电容器
+     ===================================================================== */
+  function drawApps(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var theta = st.theta;
+    var S0 = 0.004, dIn = 0.001;
+    var C = P.varCap(S0, theta, dIn, 1);
+
+    /* 左：可变电容器（俯视图：定片半圆 + 动片半圆转动，交叠面积 = 正对面积） */
+    var i;
+    var cx = W * 0.28, cy = H * 0.44;
+    var R = Math.min(W * 0.16, H * 0.30);
+    var half = function (rot) {          // 半圆盘路径（rot 为弧度）
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, rot + Math.PI / 2, rot - Math.PI / 2, false);
+      ctx.closePath();
+    };
+    var rot = theta * Math.PI / 180;
+    /* 定片（白） */
+    half(0);
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fill();
+    stroke(ctx, THEME.white, 2.2);
+    ctx.stroke();
+    /* 动片（灰），与定片的交叠部分染金 = 正对面积 */
+    ctx.save();
+    half(0);
+    ctx.clip();
+    half(rot);
+    ctx.fillStyle = THEME.goldFill;
+    ctx.fill();
+    ctx.restore();
+    half(rot);
+    stroke(ctx, THEME.grey, 2.2);
+    ctx.stroke();
+    /* 圆心与转轴 */
+    glowDot(ctx, cx, cy, 4, THEME.white, 0);
+    text(ctx, '转轴', cx + 14, cy + 20, { color: THEME.grey, size: 11 });
+    var ovl = clamp(P.varArea(S0, theta) / S0, 0, 1);
+    stroke(ctx, THEME.gold, 1.6);
+    ctx.beginPath(); ctx.arc(cx, cy, R * 0.16, 0, Math.PI * 2); ctx.stroke();
+    text(ctx, '正对面积：' + num(ovl * 100, 0) + '%', cx, cy + R + 20, { color: THEME.gold, size: 12.5, align: 'center', weight: 600 });
+    text(ctx, '可变电容器（俯视图：转动动片）', cx, cy - R - 24, { color: THEME.white, size: 13.5, align: 'center', weight: 600 });
+    text(ctx, 'C = ' + cfmt(C), cx, cy + R + 42, { color: THEME.yellow, size: 15, align: 'center', weight: 700 });
+    text(ctx, '转角 θ = ' + num(theta, 0) + '°　（定片白 / 动片灰）', cx, cy - R - 6, { color: THEME.green, size: 12, align: 'center' });
+    S.hits.push({ id: 'dragTheta', x: cx - R * 1.2, y: cy - R * 1.2, w: R * 2.4, h: R * 2.4 });
+    S.dragHandlers = {
+      dragTheta: function (st2, px, py) {
+        var ang = Math.atan2(cy - py, px - cx) * 180 / Math.PI;   // [−180,180]
+        if (ang < 0) { ang += 360; }
+        st2.theta = clamp(ang - 90, 0, 180);
+      }
+    };
+
+    /* 右：三类常用电容器 + 电路符号 */
+    var rx = W * 0.56, rw = W - PADR - rx;
+    var kinds = [
+      { t: '固定·聚苯乙烯', s: '铝箔 ＋ 薄膜卷起来' },
+      { t: '固定·电解', s: '氧化膜很薄 ⇒ 电容较大' },
+      { t: '超级电容器', s: '充电快、储能多、功率大、寿命长' }
+    ];
+    for (i = 0; i < kinds.length; i++) {
+      var yy = PADT + 16 + i * Math.min(64, H * 0.12);
+      text(ctx, kinds[i].t, rx, yy, { color: THEME.white, size: 13, weight: 600 });
+      text(ctx, kinds[i].s, rx, yy + 18, { color: THEME.grey, size: 11.5 });
+    }
+    /* 电路符号 */
+    var sy = PADT + 16 + kinds.length * Math.min(64, H * 0.12) + 18;
+    text(ctx, '电路符号', rx, sy, { color: THEME.grey, size: 11.5 });
+    var sxx = rx + 10, syy = sy + 30;
+    capSymbol(ctx, sxx + 30, syy, 8, 20, THEME.white, 4);
+    seg(ctx, sxx, syy, sxx + 22, syy);
+    seg(ctx, sxx + 38, syy, sxx + 60, syy);
+    text(ctx, '固定', sxx + 30, syy + 34, { color: THEME.grey, size: 10.5, align: 'center' });
+    capSymbol(ctx, sxx + 130, syy, 8, 20, THEME.white, 4);
+    seg(ctx, sxx + 100, syy, sxx + 122, syy);
+    seg(ctx, sxx + 138, syy, sxx + 160, syy);
+    arrow(ctx, sxx + 168, syy + 16, sxx + 138, syy - 14, THEME.grey, 1.4, 6);
+    text(ctx, '可变', sxx + 130, syy + 34, { color: THEME.grey, size: 10.5, align: 'center' });
+    capSymbol(ctx, sxx + 230, syy, 8, 20, THEME.white, 4);
+    seg(ctx, sxx + 200, syy, sxx + 222, syy);
+    seg(ctx, sxx + 238, syy, sxx + 260, syy);
+    text(ctx, '＋', sxx + 230, syy - 32, { color: THEME.red, size: 12, align: 'center' });
+    text(ctx, '电解（有极性）', sxx + 230, syy + 34, { color: THEME.grey, size: 10.5, align: 'center' });
+  }
+
+  /* =====================================================================
+     场景十 · practice：练习与应用（第1题表格／第2题四图／第3题计算／第4题除颤器）
+     ===================================================================== */
+  function drawPractice(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    if (st.prac === 'table') { drawPrTable(S, st); return; }
+    if (st.prac === 'graphs') { drawPrGraphs(S, st); return; }
+    if (st.prac === 'defib') { drawPrDefib(S, st); return; }
+    drawPrCalc(S, st);
+  }
+
+  function drawPrTable(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    var M = S.map(820, 250);
+    drawCircuit(S, M, {
+      sw: st.sw, U0: 1.5, I: (st.sw === 1 ? 2.7e-4 : -2.7e-4), U: (st.sw === 1 ? 1.2 : 0.6),
+      C: P.DEMO_C, iMax: 2.73e-4, Q: P.DEMO_C * 1.2, Qmax: P.qTotal(P.DEMO_C, 1.5),
+      showCurrent: true, voltLabel: undefined,
+      marks: { t1: st.pick === 't1', t2: st.pick === 't2' }
+    });
+    /* 表格 */
+    var rows = [
+      {
+        k: 't1', given: '电流向左', cells: ['向左', '正在减小', '接通 2', '正在减小', '电容器储存的电能转化为其他形式的能', '放电']
+      },
+      {
+        k: 't2', given: '电流向右', cells: ['向右', '正在减小', '接通 1', '正在增大', '电源的能量储存在电容器中', '充电']
+      }
+    ];
+    var hd = ['电流方向', '电流在增/减', '开关接', '电压在增/减', '能量转化', '充/放电'];
+    var tx = PADL + 8, ty = H - PADB - 86, rowh = 22;
+    text(ctx, '教材 P43 第1题：先在表格里填空，再点 t₁ / t₂ 对答案', tx, ty - 16,
+      { color: THEME.yellow, size: 13, weight: 600 });
+    var cw = [78, 108, 74, 108, 250, 74];
+    var xx = tx, c;
+    for (c = 0; c < hd.length; c++) {
+      text(ctx, hd[c], xx, ty, { color: THEME.grey, size: 11, align: 'left' });
+      xx += cw[c];
+    }
+    stroke(ctx, THEME.wireSoft, 1);
+    seg(ctx, tx, ty + 10, xx, ty + 10);
+    for (var r = 0; r < rows.length; r++) {
+      var ry = ty + 20 + r * rowh + 6;
+      var on = (st.pick === rows[r].k);
+      xx = tx;
+      for (c = 0; c < rows[r].cells.length; c++) {
+        var txt = on ? rows[r].cells[c] : (c === 0 ? rows[r].given : '？');
+        var col = on ? (c === 5 ? THEME.yellow : THEME.white) : (c === 0 ? THEME.gold : THEME.grey);
+        text(ctx, txt, xx, ry, { color: col, size: 11.5, weight: on ? 600 : 400 });
+        xx += cw[c];
+      }
+      text(ctx, rows[r].k.replace('t', 't'), tx - 22, ry, { color: on ? THEME.yellow : THEME.grey, size: 12, weight: 700 });
+    }
+    stroke(ctx, THEME.wireSoft, 1);
+    seg(ctx, tx, ty + 20 + rows.length * rowh + 6, xx, ty + 20 + rows.length * rowh + 6);
+  }
+
+  function drawPrGraphs(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    var names = ['A', 'B', 'C', 'D'];
+    var gw = (W - PADL - PADR - 30) / 2, gh = (H - PADT - PADB - 70) / 2;
+    var kinds = [
+      { ax: 'Q', ay: 'C', wrong: true, f: function (t) { return 0.15 + 0.75 * t; } },     // C 随 Q 增大（错）
+      { ax: 'U', ay: 'Q', wrong: false, f: function (t) { return t; } },                 // Q ∝ U
+      { ax: 'U', ay: 'C', wrong: false, f: function () { return 0.6; } },                // C 不随 U 变
+      { ax: 'Q', ay: 'C', wrong: false, f: function () { return 0.6; } }                 // C 不随 Q 变
+    ];
+    text(ctx, '教材第2题：下面四幅图中，只有一幅是错误的 —— 点它选出来', PADL, PADT - 10,
+      { color: THEME.yellow, size: 13, weight: 600 });
+    for (var i = 0; i < 4; i++) {
+      var gx = PADL + (i % 2) * (gw + 30), gy = PADT + 6 + Math.floor(i / 2) * (gh + 34);
+      var picked = (st.graph === names[i]);
+      panel(ctx, gx, gy, gw, gh);
+      box(ctx, gx, gy, gw, gh, picked ? (kinds[i].wrong ? THEME.yellow : THEME.red) : THEME.wireSoft, picked ? 2 : 1);
+      var ox = gx + 46, oy = gy + gh - 30, w = gw - 76, h = gh - 54;
+      stroke(ctx, THEME.white, 1.2);
+      seg(ctx, ox, oy, ox + w, oy);
+      seg(ctx, ox, oy, ox, oy - h);
+      head(ctx, ox + w, oy, 0, 6, THEME.white);
+      head(ctx, ox, oy - h, -Math.PI / 2, 6, THEME.white);
+      text(ctx, kinds[i].ax, ox + w, oy + 13, { color: THEME.grey, size: 11, align: 'right' });
+      text(ctx, kinds[i].ay, ox - 6, oy - h, { color: THEME.grey, size: 11, align: 'right' });
+      stroke(ctx, THEME.white, 2.4);
+      ctx.beginPath();
+      for (var m = 0; m <= 20; m++) {
+        var t = m / 20;
+        var X = ox + w * t, Y = oy - h * clamp(kinds[i].f(t), 0, 1);
+        if (m === 0) { ctx.moveTo(X, Y); } else { ctx.lineTo(X, Y); }
+      }
+      ctx.stroke();
+      label(ctx, names[i], gx + 16, gy + 16, picked ? THEME.yellow : THEME.white, 15);
+    }
+    var msg;
+    if (st.graph === '') { msg = '点 A / B / C / D 选出错的那一幅'; }
+    else if (st.graph === 'A') { msg = '✓ 对：只有图 A 错 —— 电容 C 不随 Q 增大，它由电容器本身决定'; }
+    else { msg = '✗ 图 ' + st.graph + ' 是对的：C 与 Q、U 无关，Q 与 U 成正比'; }
+    text(ctx, msg, W / 2, H - 22, { color: (st.graph === 'A') ? THEME.yellow : THEME.white, size: 14, align: 'center', weight: 700 });
+  }
+
+  function drawPrCalc(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    var C = P.pr3C();
+    var Umax = 5, Qmax = C * Umax;
+    var ox = PADL + 70, oy = H - PADB - 46, w = W - PADL - PADR - 300, h = H - PADT - 90;
+    panel(ctx, PADL - 8, PADT - 8, w + 90, H - PADT - PADB + 12);
+    stroke(ctx, THEME.white, 1.4);
+    seg(ctx, ox, oy, ox + w, oy);
+    seg(ctx, ox, oy, ox, oy - h);
+    head(ctx, ox + w, oy, 0, 7, THEME.white);
+    head(ctx, ox, oy - h, -Math.PI / 2, 7, THEME.white);
+    text(ctx, 'U / V', ox + w, oy + 14, { color: THEME.grey, size: 11.5, align: 'right' });
+    text(ctx, 'Q / C', ox - 8, oy - h + 2, { color: THEME.grey, size: 11.5, align: 'right' });
+    var XU = function (u) { return ox + w * clamp(u / Umax, 0, 1.05); };
+    var YQ = function (q) { return oy - h * clamp(q / Qmax, 0, 1.05); };
+    var g;
+    for (g = 1; g <= 5; g++) {
+      text(ctx, g + '', XU(g), oy + 12, { color: THEME.grey, size: 10.5, align: 'center' });
+    }
+    stroke(ctx, THEME.yellow, 2.6);
+    seg(ctx, XU(0), YQ(0), XU(Umax), YQ(C * Umax));
+    /* 题给点（3 V、4.5×10⁻⁴ C） */
+    glowDot(ctx, XU(3), YQ(4.5e-4), 5, THEME.gold, 8);
+    text(ctx, '题给：3 V、4.5×10⁻⁴ C', XU(3) + 10, YQ(4.5e-4) - 16, { color: THEME.gold, size: 11.5 });
+    /* 可拖点 */
+    var px = XU(st.U), py = YQ(C * st.U);
+    glowDot(ctx, px, py, 5.6, THEME.yellow, 10);
+    S.hits.push({ id: 'dragU', x: px - 28, y: py - 28, w: 56, h: 56 });
+    dash(ctx, [6, 5]); stroke(ctx, THEME.ghost, 1.2);
+    seg(ctx, px, py, px, oy); seg(ctx, px, py, ox, py);
+    nodash(ctx);
+    label(ctx, 'U = ' + num(st.U, 2) + ' V　Q = ' + qfmt(C * st.U), px + 10, py + 18, THEME.green, 12, 'left');
+    S.dragHandlers = {
+      dragU: function (st2, px) { st2.U = clamp((px - ox) / w * Umax, 0, Umax); }
+    };
+    /* 右栏结论 */
+    var rx = W - PADR - 280;
+    text(ctx, 'C = Q/U = 4.5×10⁻⁴ / 3', rx, PADT + 20, { color: THEME.white, size: 13.5, weight: 600 });
+    text(ctx, '= ' + cfmt(C) + ' = 1.5×10⁻⁴ F', rx, PADT + 42, { color: THEME.yellow, size: 15, weight: 700 });
+    text(ctx, '电压降为 2 V 时：', rx, PADT + 78, { color: THEME.white, size: 12.5 });
+    text(ctx, 'C 仍然是 ' + cfmt(C) + '（不变）', rx, PADT + 100, { color: THEME.yellow, size: 13, weight: 600 });
+    text(ctx, 'Q′ = CU′ = ' + qfmt(P.pr3Q2()), rx, PADT + 122, { color: THEME.gold, size: 13, weight: 600 });
+  }
+
+  function drawPrDefib(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    var U = st.U * 1000;                       // 拖动量按 kV 存，这里换成 V
+    if (U < 500) { U = 500; }
+    var Q = P.pr4Q(U);
+    var cx = W * 0.30, cy = H * 0.46;
+    /* 除颤器：电容器 + 两块电极板 + 心脏 */
+    capPlates(ctx, cx - 120, cy - 40, cy - 18, 46, THEME.white, 5);
+    text(ctx, 'C = 15 µF', cx - 120, cy - 62, { color: THEME.white, size: 12.5, align: 'center' });
+    stroke(ctx, THEME.white, 2.4);
+    seg(ctx, cx - 120 + 46, cy - 29, cx - 20, cy - 29);
+    seg(ctx, cx - 120 - 46, cy - 29, cx - 200, cy - 29);
+    seg(ctx, cx - 200, cy - 29, cx - 200, cy + 20);
+    /* 心脏 */
+    var hx = cx + 60, hy = cy + 6, hr = 42;
+    stroke(ctx, THEME.red, 2.6);
+    ctx.beginPath();
+    ctx.moveTo(hx, hy + hr * 0.72);
+    ctx.bezierCurveTo(hx - hr, hy - hr * 0.15, hx - hr * 0.52, hy - hr, hx, hy - hr * 0.32);
+    ctx.bezierCurveTo(hx + hr * 0.52, hy - hr, hx + hr, hy - hr * 0.15, hx, hy + hr * 0.72);
+    ctx.stroke();
+    /* 电极板 */
+    stroke(ctx, THEME.gold, 3);
+    seg(ctx, hx - hr - 34, hy - 26, hx - hr - 34, hy + 26);
+    seg(ctx, hx + hr + 34, hy - 26, hx + hr + 34, hy + 26);
+    stroke(ctx, THEME.white, 2);
+    seg(ctx, cx - 200 + 100, cy + 20, hx - hr - 34, hy + 40);
+    seg(ctx, hx + hr + 34, hy + 40, cx + 150, cy + 20);
+    /* 读数 */
+    text(ctx, '充电电压 U = ' + num(U / 1000, 1) + ' kV', W * 0.66, cy - 46, { color: THEME.green, size: 15, align: 'center', weight: 600 });
+    text(ctx, 'Q = CU = 15 µF × ' + num(U / 1000, 1) + ' kV', W * 0.66, cy - 16, { color: THEME.white, size: 13.5, align: 'center' });
+    text(ctx, '= ' + qfmt(Q), W * 0.66, cy + 12, { color: THEME.yellow, size: 19, align: 'center', weight: 700 });
+    text(ctx, '放电时间 2.0 ms ⇒ 平均电流 ≈ ' + num(P.pr4I(U), 1) + ' A', W * 0.66, cy + 42,
+      { color: THEME.grey, size: 12, align: 'center' });
+    S.hits.push({ id: 'dragU', x: W * 0.44, y: cy - 60, w: W * 0.5, h: 120 });
+    S.dragHandlers = {
+      dragU: function (st2, px) {
+        st2.U = clamp((px - W * 0.44) / (W * 0.5) * 9.0, 0.5, 9.0);
+      }
+    };
+    text(ctx, '（教材题干按 9.0 kV 作答得 0.135 C；教参按 4.0 kV 得 6.0×10⁻² C）',
+      W / 2, H - 20, { color: THEME.grey, size: 12, align: 'center' });
+  }
+
+  /* =====================================================================
+     场景十一 · text：结论页
+     ===================================================================== */
+  function drawText(S, st) {
+    var ctx = S.ctx, W = S.W, H = S.H;
+    ctx.clearRect(0, 0, W, H);
+    var lines = st.lines || [];
+    var n = lines.length, lh = Math.min(52, (H - 80) / Math.max(1, n));
+    var top = H / 2 - (n - 1) * lh / 2 - 8;
+    for (var i = 0; i < n; i++) {
+      var L = lines[i];
+      text(ctx, L.t, W / 2, top + i * lh, {
+        color: L.c || THEME.white, size: L.size || 20, weight: 700, align: 'center'
+      });
+    }
+  }
+
+  /* =====================================================================
+     统一入口
+     ===================================================================== */
+  function render(cv, st) {
+    var f = fitCanvas(cv);
+    var S = baseScene(f.W, f.H, st);
+    S.ctx = f.ctx;
+    S.hits = [];
+    var ctx = S.ctx;
+    ctx.clearRect(0, 0, f.W, f.H);
+    ctx.fillStyle = THEME.bg;
+    ctx.fillRect(0, 0, f.W, f.H);
+    switch (st.scene) {
+      case 'circuit': drawCircuitScene(S, st); break;
+      case 'sharing': drawSharing(S, st); break;
+      case 'qu': drawQU(S, st); break;
+      case 'plate': drawPlate(S, st); break;
+      case 'itarea': drawItArea(S, st); break;
+      case 'defn': drawDefn(S, st); break;
+      case 'safety': drawSafety(S, st); break;
+      case 'apps': drawApps(S, st); break;
+      case 'practice': drawPractice(S, st); break;
+      case 'text': drawText(S, st); break;
+      default: drawModel(S, st);
+    }
+    /* 画布上的可点区域（投票按钮、四幅图）—— 供命中测试用 */
+    if (st.scene === 'defn' && st.show.water && !st.show.table) {
+      var by1 = S.H - PADB - 74, bx1 = S.W / 2 - 150;
+      S.hits.push({ id: 'voteQU', x: bx1, y: by1, w: 140, h: 40 });
+      S.hits.push({ id: 'voteUQ', x: bx1 + 160, y: by1, w: 140, h: 40 });
+    }
+    if (st.scene === 'practice' && st.prac === 'graphs') {
+      var gw = (S.W - PADL - PADR - 30) / 2, gh = (S.H - PADT - PADB - 70) / 2;
+      for (var i = 0; i < 4; i++) {
+        S.hits.push({
+          id: 'graph' + ['A', 'B', 'C', 'D'][i],
+          x: PADL + (i % 2) * (gw + 30), y: PADT + 6 + Math.floor(i / 2) * (gh + 34), w: gw, h: gh
+        });
+      }
+    }
+    if (st.scene === 'circuit' || (st.scene === 'practice' && st.prac === 'table')) {
+      var M = S.map(880, 268);
+      S.hits.push({ id: 'sw1', x: M.x(150), y: M.y(40) - 34, w: 130, h: 68 });
+      S.hits.push({ id: 'sw2', x: M.x(150), y: M.y(190) - 34, w: 130, h: 68 });
+      S.hits.push({ id: 'sw0', x: M.x(250), y: M.y(60), w: 70, h: 140 });
+    }
+    return { S: S };
+  }
+
+  var api = {
+    THEME: THEME, FONT: FONT, fitCanvas: fitCanvas, render: render, baseScene: baseScene,
+    num: num, qfmt: qfmt, ufmt: ufmt, cfmt: cfmt, ifmt: ifmt, tfmt: tfmt, sciFmt: sciFmt, sup: sup,
+    drawCircuit: drawCircuit
+  };
+  global.VizRender = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* =====================================================================
+   viz_ca_steps.js —— 24 步脚本（6 幕）· 10.4 电容器的电容
+
+     第一幕 · 装电的容器（3 步）：主问题 → 拆开看模型 → 模型外推
+     第二幕 · 装进去、倒出来（5 步）：实验电路 → 充电（反步调）→ 断开电源 → 放电 → 练习第1题
+     第三幕 · 能装多少电荷（5 步）：抛难题 → 平分电荷（充 A）→ 并联分半 → 数据 U∝Q → 定义 C = Q/U
+     第四幕 · 电容器自己的事（4 步）：不同电容器对照 → Q–U 图斜率=C → Q/U 还是 U/Q → 双胞胎对照
+     第五幕 · 单位、耐压与应用（5 步）：单位与量级 → 击穿与额定 → 常用/可变电容器 → I-t 面积 → 平行板
+     第六幕 · 收束（2 步）：练习与应用 → 三句话带走
+
+   设计原则（同 10.1 / 10.2 / 10.3）：
+     · 每一步 = 一个纯状态；apply(st, i) 重建该步初态 → 前后翻页永远精确
+     · allow 是唯一交互开关；hint 说能拖/能点的必须在 allow 里，allow 开着的必须在提示里提到
+     · 每一步都能指回教案：环节①–⑦、认知障碍①–⑩、评价点 E1–E10
+   ===================================================================== */
+(function (global) {
+  'use strict';
+
+  var P = global.VizPhys;
+
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+
+  /* ---------- 状态 ---------- */
+  function baseState() {
+    return {
+      step: 0, scene: 'model',
+      act: '', title: '', hint: '', note: '', formula: '', lines: [],
+      /* 模型 */
+      unfold: 0, d: 0.01, S: 1, er: 1, theta: 0,
+      /* 电路 */
+      sw: 1, t: 0, U0: P.DEMO_U0, vm: 'digital', pick: 't1',
+      /* 平分电荷 */
+      n: 0, s1: 1, s2: true, bCharged: false, opLog: [],
+      /* Q–U */
+      cap: 2, U: 1.0, Cn: 2200e-6,
+      /* 面积 */
+      N: 12, mode: 'mid',
+      /* 定义 / 类比 */
+      vote: '', h: 1.0,
+      /* 耐压 */
+      Uv: 30,
+      /* 练习 */
+      prac: 'table', graph: '',
+      show: {}, allow: {},
+      key: ''
+    };
+  }
+
+  function mk(act, title, o) {
+    o = o || {};
+    return {
+      act: act, title: title, hint: o.hint || '', note: o.note || '', formula: o.formula || '',
+      scene: o.scene || 'model', allow: o.allow || {}, show: o.show || {}, init: o.init || null,
+      lines: o.lines || null
+    };
+  }
+
+  var A1 = '一 · 装电的容器', A2 = '二 · 装进去、倒出来', A3 = '三 · 能装多少电荷',
+    A4 = '四 · 电容器自己的事', A5 = '五 · 单位、耐压与应用', A6 = '六 · 收束';
+
+  var CAP_LIST = [{ n: '200 µF', F: 200e-6 }, { n: '1000 µF', F: 1000e-6 }, { n: '2200 µF', F: 2200e-6 }];
+
+  var STEPS = [
+    /* ---------------- 第一幕 · 装电的容器（环节①②） ---------------- */
+    mk(A1, '主问题：水可以用容器装，电荷装在哪里？', {
+      scene: 'model',
+      allow: {},
+      show: { intro: true },
+      hint: '这一屏不用拖：先把问题挂在墙上 —— 电怎么"装进去"、又怎么"倒出来"？',
+      note: '教材问题栏：<b>"水可以用容器储存起来，电荷也可以用一个容器储存起来。"</b><br>' +
+        '照相机闪光前"吱——"响一声、除颤器"啪"地一下，都是电容器在放电荷。<br>' +
+        '主问题一直挂到第 21 步（I-t 图像面积）才回收。',
+      formula: '电，装在哪里？怎么装进去、怎么倒出来？'
+    }),
+    mk(A1, '拆开一只电容器：两个极板 ＋ 电介质', {
+      scene: 'model',
+      allow: { unfold: true },
+      show: { coil: true },
+      hint: '拖<b>拆开</b>滑块：把卷起来的纸介质电容器一层层摊平，看里面到底是什么。',
+      note: '教材构造句：<b>"在两个相距很近的平行金属板中间夹上一层绝缘物质——电介质（空气也是一种电介质），就组成一个最简单的电容器。"</b><br>' +
+        '拆开之后只剩两样东西：<b>① 两块金属极板　② 极板之间的电介质</b>。<br>' +
+        '右边三种实物形状完全不同（卷绕、叠片、转轴），但都满足这两条 —— 模型是拆出来的，不是背出来的。',
+      formula: '电容器 ＝ 两个极板 ＋ 电介质　（εr = 1 的空气也是电介质）',
+      init: function (st) { st.unfold = 0; st.theta = 0; }
+    }),
+    mk(A1, '模型外推：任何两个彼此绝缘又相距很近的导体', {
+      scene: 'model',
+      allow: { d: true },
+      show: { extrap: true },
+      hint: '拖<b>板距 d</b>：两块导体靠得很近，中间又绝缘，它们就是一个电容器。',
+      note: '教材原句：<b>"实际上，任何两个彼此绝缘又相距很近的导体，都可以看成一个电容器。"</b><br>' +
+        '所以电容器的形状可以千变万化：平行板、卷绕的薄膜、电解电容器的氧化膜、可变电容器的铝片组……<br>' +
+        '注意：课本<b>没有给电容器下定义</b>，只要求我们从实物里看出这个模型。',
+      formula: '两块导体 ＋ 彼此绝缘 ＋ 相距很近　⇒　就是一个电容器',
+      init: function (st) { st.d = 0.01; st.dOf = 0.01; st.er = 1; }
+    }),
+
+    /* ---------------- 第二幕 · 装进去、倒出来（环节③ 难点二） ---------------- */
+    mk(A2, '实验电路：要盯住三个地方', {
+      scene: 'circuit',
+      allow: { sw: true, t: true, U0: true },
+      show: { leads: true },
+      hint: '拨<b>开关 S</b>、拖<b>时刻 t</b> 沿过程走一遍，或把<b>电源电压</b>调到 3 V：盯住电压表读数、电流计指针、以及电压最大时电流是多少。',
+      note: '器材按红线配：干电池 <b>1.5 V</b>、电容器 <b>200 µF</b>、灵敏电流计 G1（内阻 2500 Ω，指针居中双向偏）、限流电阻 <b>3 kΩ</b>、<b>内阻很大的数字电压表</b>。<br>' +
+        '回路总电阻 5.5 kΩ ⇒ τ = RC = <b>1.1 s</b>，充放电在 3–5τ（3.3–5.5 s）内基本结束 —— 现象慢到看得清。<br>' +
+        '课前必做：先检验电流计偏向与电流流向的对应关系。',
+      formula: 'τ = RC = 5.5 kΩ × 200 µF = 1.1 s　（3–5τ ⇒ 3.3–5.5 s）',
+      init: function (st) { st.sw = 1; st.t = 0; st.U0 = 1.5; st.vm = 'digital'; }
+    }),
+    mk(A2, '充电：电压在涨，电流却在跌', {
+      scene: 'circuit',
+      allow: { sw: true, t: true, U0: true },
+      show: { curves: true, leads: true },
+      hint: '拖<b>时刻 t</b>（或拨<b>开关 S</b> 回到 1 重新开始，也可把<b>电源电压</b>换成 3 V）：上面两条曲线，一条往上爬、一条往下掉。',
+      note: '教材原句：<b>"随着两极板之间电势差的增大，充电电流逐渐减小至 0。"</b><br>' +
+        '这就是本课的<b>认知冲突</b>：电压在涨、电流在跌 —— <b>反步调</b>。<br>' +
+        '先让学生两两说理（"电荷越积越多，越来越难塞进去"），教师不评判，留到第 21 步用 I-t 图像面积回填。',
+      formula: 'U(t) = U₀(1 − e^(−t/τ))　↑　｜　I(t) = (U₀/R)e^(−t/τ)　↓',
+      init: function (st) { st.sw = 1; st.t = 0.35; st.U0 = 1.5; }
+    }),
+    mk(A2, '断开电源：电压表还有读数吗？', {
+      scene: 'circuit',
+      allow: { sw: true, t: true, vm: true },
+      show: { leads: true, hold: true },
+      hint: '把<b>开关 S</b> 拨到"断开"，再拖<b>时刻 t</b>；点<b>电压表</b>换成学生电压表看看有什么不同。',
+      note: '教材原句：<b>"即使断开电源，两极板上的电荷由于相互吸引而仍然被保存在电容器中。"</b><br>' +
+        '数字电压表内阻约 <b>100 MΩ</b>，它本身就是一条"隐藏的放电回路"：τ<sub>V</sub> = R<sub>V</sub>C ≈ 5.5 h，所以读数几乎不动。<br>' +
+        '若换成 3 kΩ 的学生电压表，τ<sub>V</sub> = <b>0.6 s</b> —— 不到一秒就放完，什么都看不到了。这就是演示器材的红线。',
+      formula: '断开后 τ_V = R_V·C：100 MΩ ⇒ 5.5 h（几乎不变）｜3 kΩ ⇒ 0.6 s（瞬间放完）',
+      init: function (st) { st.sw = 0; st.t = 3.0; st.vm = 'digital'; }
+    }),
+    mk(A2, '放电：电流反向，U 与 I 一起归零', {
+      scene: 'circuit',
+      allow: { sw: true, t: true },
+      show: { curves: true },
+      hint: '拨<b>开关 S</b> 到 2（放电），拖<b>时刻 t</b>：电流计的指针反着偏，电压与电流一起降到 0。',
+      note: '教材原句：<b>"放电电流由电容器的正极板经过电阻 R 流向电容器的负极板，正负电荷中和……最后两极板电势差以及放电电流都等于 0。"</b><br>' +
+        '充电时电流由电源正极流向电容器正极板（本图电流计处<b>向右</b>）；放电时反过来（<b>向左</b>）。<br>' +
+        '能量线索：充电时电源的能量不断储存在电容器中，放电时通过电流做功转化为电路中其他形式的能量。',
+      formula: 'U(t) = U₀e^(−t/τ)　↓　｜　I(t) = −(U₀/R)e^(−t/τ)　（负号 = 方向相反）',
+      init: function (st) { st.sw = 2; st.t = 0.5; }
+    }),
+    mk(A2, '教材练习第1题：两个时刻的表格', {
+      scene: 'practice',
+      allow: { pick: true, sw: true },
+      show: {},
+      hint: '点 <b>t₁ / t₂</b> 两个时刻，看电流表方向与电路状态；点<b>开关 S</b> 可以在画布上复核这一刻的通路。',
+      note: '教材 P43 第1题给的已知：t₁ 时刻电流表电流<b>向左</b>，t₂ 时刻电流表电流<b>向右</b>。<br>' +
+        '判据只有两条：电流方向（充电由电源正极流向电容器正极板，放电相反）与"电流总是在减小"。',
+      formula: 't₁ 向左 ⇒ 放电、接 2、电压减小、电能转化为其他形式　｜　t₂ 向右 ⇒ 充电、接 1、电压增大',
+      init: function (st) { st.prac = 'table'; st.pick = 't1'; st.sw = 2; st.t = 0.5; }
+    }),
+
+    /* ---------------- 第三幕 · 能装多少电荷（环节④ ★重点） ---------------- */
+    mk(A3, '抛难题：实验室有直接测电荷量的仪器吗？', {
+      scene: 'sharing',
+      allow: {},
+      show: { problem: true },
+      hint: '这一屏不用拖：先承认这个困难 —— 没有直接测电荷量的仪器。',
+      note: '"电容器所带的电荷量跟两极板间的电势差是否存在某种定量关系？"（教材 P40）<br>' +
+        '要想研究 Q 与 U 的关系，先得能<b>测出 Q</b> —— 可实验室里没有直接测电荷量的仪器。<br>' +
+        '这正是本节的<b>难点一</b>，也是学生必须自己感到"这是个真问题"的地方。',
+      formula: '没有直接测电荷量 Q 的仪器，怎么办？'
+    }),
+    mk(A3, '平分电荷法：先给 A 充电，得到 Q', {
+      scene: 'sharing',
+      allow: { op: true },
+      show: { circuit: true },
+      hint: '点 <b>【给 A 充电】</b>：把 S₁ 接 1，电源给 A 充上电荷量 Q，看数字电压表的读数。',
+      note: '要测量 Q 与 U 的关系，先造出<b>一组有确定比例关系的电荷量</b>。<br>' +
+        '迁移库仑当年平分电荷量的办法：两个相同的金属球接触后分开，电荷量各分一半。<br>' +
+        '电容器版本的操作三条纪律（教材 P40 括注）：① B 与 A <b>要相同</b>；② B 每次分完<b>必须放干净</b>；③ <b>手不要碰极板</b>，以免电荷漏失。',
+      formula: 'Q_A = Q　⇒　电压表读数 U₁（本机取 2200 µF / 3 V 电源）',
+      init: function (st) { st.n = 0; st.s1 = 1; st.s2 = true; st.bCharged = false; st.opLog = []; }
+    }),
+    mk(A3, '并联一只空电容器：Q 变一半，U 也变一半', {
+      scene: 'sharing',
+      allow: { op: true },
+      show: { circuit: true, table: true },
+      hint: '点 <b>【A‖B 平分】</b> 再点 <b>【给 B 放电】</b>，来回四次：每分一次，电压表的读数就减半。',
+      note: '教材原句：<b>"电容器的电荷量变为原来的一半时，其两极板间的电势差也变为原来的一半。"</b><br>' +
+        'S₁ 接 2 时，相同且不带电的 B 与 A 并联 ⇒ 电荷守恒 + 两只相同 ⇒ 各得一半（Q/2）。<br>' +
+        '断开 S₁、闭合 S₂ 把 B 放干净，再并联一次就得 Q/4 …… 依次得到 Q、Q/2、Q/4、Q/8、Q/16。<br>' +
+        '这一招绕开了"测不出 Q"：不测电荷量，也能得到一串<b>成比例</b>的电荷量。',
+      formula: 'Q_A ： Q/2 ： Q/4 ： Q/8 ： Q/16　（A 上电荷量依次减半）',
+      init: function (st) { st.n = 0; st.s1 = 1; st.s2 = true; st.bCharged = false; st.opLog = ['Q']; }
+    }),
+    mk(A3, '用数据说话：U 与 Q 成正比', {
+      scene: 'sharing',
+      allow: { op: true },
+      show: { circuit: true, table: true, ratio: true },
+      hint: '点 <b>【A‖B 平分】/【给 B 放电】</b> 把五次数据凑齐，看相邻两组电压之比。',
+      note: '教参 P54 官方实测数据（2200 µF）：<b>3.149 / 1.555 / 0.780 / 0.395 / 0.201 V</b>。<br>' +
+        '相邻两组电压之比：2.03、1.99、1.97、<b>1.965</b> —— 都在 2 附近，说明 <b>U ∝ Q</b>。<br>' +
+        '最后一组 1.965 与 2 的偏差（约 1.7%）正好当误差讨论的现成素材。',
+      formula: 'U ∝ Q　（相邻两组的电压之比 ≈ 2）',
+      init: function (st) { st.n = 4; st.s1 = 2; st.s2 = false; st.bCharged = true; st.opLog = ['Q', 'Q/2', 'Q/4', 'Q/8', 'Q/16']; }
+    }),
+    mk(A3, 'Q/U 是个常数 ⇒ 定义电容 C = Q/U', {
+      scene: 'sharing',
+      allow: {},
+      show: { circuit: true, table: true, ratio: true, defn: true },
+      hint: '这一屏不用拖：把三句话读出来，定义式就自己长出来了。',
+      note: '教材 P40 的三层递进：① 同一个电容器，<b>Q/U 不变</b>；② 不同的电容器，这个比<b>一般不同</b>；③ 所以 Q/U <b>表征了电容器储存电荷的特性</b>。<br>' +
+        '定义式：<b>C = Q/U</b>。它在数值上等于"使两极板间的电势差为 1 V 时电容器需要带的电荷量"。<br>' +
+        '<b>旁批（硬口径）</b>：这里说的"电容器所带的电荷量 Q"，是指<b>一个极板</b>所带电荷量的绝对值。',
+      formula: 'C ＝ Q/U　（Q 指一个极板所带电荷量的绝对值）',
+      init: function (st) { st.n = 4; st.s1 = 2; st.s2 = false; st.bCharged = true; }
+    }),
+
+    /* ---------------- 第四幕 · 电容器自己的事（环节④⑤） ---------------- */
+    mk(A4, '换一只电容器：同样的电压，装的电荷不一样', {
+      scene: 'qu',
+      allow: { cap: true },
+      show: { compare: true },
+      hint: '点<b>电容器档位</b>（200 µF / 1000 µF / 2200 µF）：同一个电压下，三只电容器装的电荷量不同。',
+      note: '官方要求补做的对照实验：同一电压下，<b>不同电容器储存的电荷量不同</b>。<br>' +
+        '同电压放电时，电容大的那只电流更"亮"、持续更"久"（定性示意）—— 因为它存了更多电荷。<br>' +
+        '这说明 C 不是"电压的函数"，而是<b>电容器自己的属性</b>。',
+      formula: 'U 相同 ⇒ Q = CU 不同　⇒　C 是电容器本身的性质',
+      init: function (st) { st.cap = 2; st.U = 1.0; }
+    }),
+    mk(A4, 'Q–U 图：过原点的直线，斜率就是 C', {
+      scene: 'qu',
+      allow: { cap: true, U: true },
+      show: { graph: true },
+      hint: '拖<b>电压 U</b> 沿直线走，或点<b>电容器档位</b>换直线：黄点始终落在 Q = CU 这条直线上。',
+      note: '把五次平分电荷的数据画在 Q–U 图上：<b>五个点连成过原点的直线</b>，斜率就是 C = 2200 µF。<br>' +
+        '注意：平分电荷法只能给出 Q、Q/2、Q/4…… 这些<b>离散点</b>，直线是"精确的实验表明"补上的。<br>' +
+        '直线过原点 ⇒ Q 与 U 成正比；换电容器 ⇒ 换一条斜率不同的直线。',
+      formula: 'Q = CU　（图线的斜率 = C，C 越大直线越陡）',
+      init: function (st) { st.cap = 2; st.U = 1.6; }
+    }),
+    mk(A4, '教材设问：用 Q/U 还是 U/Q 定义电容？', {
+      scene: 'defn',
+      allow: { vote: true, h: true },
+      show: { water: true },
+      hint: '先在 <b>Q/U</b> 与 <b>U/Q</b> 里投票，再看官方口径；也可以拖<b>水深 / 电压</b>看"装到 1 格需要多少"。',
+      note: '官方口径（教参 P54 原句）：从比较"电容器<b>储存电荷的本领</b>"角度看，<b>二者均可</b>；从符合人们<b>日常习惯</b>角度看，<b>前者（Q/U）更好</b>。<br>' +
+        '水容器类比的两个作用：① 帮我们按日常习惯选 Q/U；② 降低"电容表征储存电荷特性"的理解难度。<br>' +
+        '<b>差异栏（必须当场点破）</b>：水会流光 ≠ 电荷守恒；水只有多少 ≠ 电荷有正负两种；"底面积" ≠ C（C 由极板几何与介质共同决定）—— <b>类比只帮理解，不作依据。</b>',
+      formula: 'C = Q/U（储存本领两者皆可；日常习惯取 Q/U）',
+      init: function (st) { st.vote = ''; st.h = 1.0; }
+    }),
+    mk(A4, '双胞胎对照：第三次"用物理量之比定义新物理量"', {
+      scene: 'defn',
+      allow: { h: true },
+      show: { water: true, table: true },
+      hint: '拖<b>水深 / 电压</b>：左边是水容器，右边是电容器，装的"量"都随刻度成正比。',
+      note: '<b>E = F/q</b>（9.3）、<b>φ = Ep/q</b>（10.1）、<b>U = W/q</b>（10.2）、<b>C = Q/U</b>（本节）—— 四个式子形状一样：都是"响应量 ÷ 激励量"。<br>' +
+        '前三次比的是<b>场</b>，这一次比的是<b>元件</b>。课标在学业要求里用的措辞是"<b>进一步</b>了解"，说明这是跨章节累积的方法目标。',
+      formula: 'E = F/q　φ = Ep/q　U = W/q　　C = Q/U ★（前三次比"场"，这次比"元件"）',
+      init: function (st) { st.h = 1.0; }
+    }),
+
+    /* ---------------- 第五幕 · 单位、耐压与应用（环节⑤⑥） ---------------- */
+    mk(A5, '单位：1 F = 1 C/V 与它的数量级', {
+      scene: 'safety',
+      allow: {},
+      show: { units: true },
+      hint: '这一屏不用拖：把"每升高 1 V 存进 1 C"这句话读到数量级条形图上。',
+      note: '教材原句：如果一个电容器带 1 C 的电荷量时两极板之间的电势差是 1 V，这个电容器的电容就是 <b>1 F</b>。<br>' +
+        '<b>1 µF = 10⁻⁶ F</b>、<b>1 pF = 10⁻¹² F</b>；本课平分电荷那只 2200 µF 的电容器就是 2.2×10⁻³ F。<br>' +
+        '看条形图：常用电容器从几十 pF（大平行板）到几千 µF（电解），超级电容器还要大得多 —— 法拉是个"很大"的单位。',
+      formula: '1 F = 1 C/V　｜　1 µF = 10⁻⁶ F　｜　1 pF = 10⁻¹² F'
+    }),
+    mk(A5, '击穿电压与额定电压：外壳上标的是哪一个？', {
+      scene: 'safety',
+      allow: { Uv: true },
+      show: { breakdown: true },
+      hint: '拖<b>加在电容器上的电压</b>往上冲：先超过外壳标注的额定电压，再冲到击穿 —— 看电介质怎样被打坏。',
+      note: '教材原句：<b>"加在电容器两极板上的电压不能超过某一限度，超过这个限度，电介质将被击穿，电容器损坏。这个极限电压叫作击穿电压。电容器外壳上标的是工作电压，或称额定电压，这个数值比击穿电压低。"</b><br>' +
+        '安全闭环：电解电容器有极性（长脚为正），反接会发热鼓包；大容量电容器充电后即使断开电源也可能带电，实验结束要用 1 kΩ 电阻跨接放电。',
+      formula: '击穿电压 ＞ 额定电压（外壳标的是额定电压，50 V 这一档）',
+      init: function (st) { st.Uv = 30; }
+    }),
+    mk(A5, '常用电容器与可变电容器', {
+      scene: 'apps',
+      allow: { theta: true },
+      show: {},
+      hint: '拖<b>动片转角</b>：两组铝片的正对面积变小，电容跟着变小 —— 这就是收音机调台的旋钮。',
+      note: '教材 P42：固定电容器（聚苯乙烯：铝箔＋薄膜卷起来；电解：氧化膜很薄所以电容较大）与可变电容器（定片 + 动片，<b>转动动片改变正对面积</b>）。<br>' +
+        '超级电容器：充电时间短、储存电能多、放电功率大、使用寿命长。<br>' +
+        '应用（课标例7 与活动建议(3)）：照相机闪光灯、心脏除颤器、电容屏与电容式键盘 —— 请查阅资料写成研究报告。',
+      formula: 'S 变 ⇒ C 变　（可变电容器＝改变正对面积的平行板电容器）',
+      init: function (st) { st.theta = 0; }
+    }),
+    mk(A5, 'I-t 图像的面积就是电荷量（回填第 5 步的悬念）', {
+      scene: 'itarea',
+      allow: { N: true, mode: true },
+      show: { both: true },
+      hint: '拖<b>分段数 N</b>、点<b>取点方式</b>（左端 / 中点 / 右端）：把小矩形一条条加起来，总面积就是电荷量。',
+      note: '教材 P39 第(1)问：狭长矩形的"宽"是 Δt、"高"是这一小段内的电流 I ⇒ <b>面积 I·Δt 就是这一小段时间内的电荷量 ΔQ</b>；<br>' +
+        '第(2)问：整条曲线下的面积就是全部放电过程的电荷量。<br>' +
+        '<b>迁移桥</b>：这与运动学里"v-t 图像的面积＝位移"完全同构（把时间分成很多小段，每段电流看作不变，再加起来）。<br>' +
+        '<b>回填主问题</b>：电压在涨、电流为什么反而跌？因为单位时间内进入极板的电荷越来越少。',
+      formula: 'Q = Σ I·Δt　⇒　I-t 曲线下的面积 ＝ 电荷量（与 v-t 面积＝位移同构）',
+      init: function (st) { st.N = 12; st.mode = 'mid'; }
+    }),
+    mk(A5, '拓展：平行板电容器的 C 由什么决定', {
+      scene: 'plate',
+      allow: { d: true, S: true, er: true },
+      show: {},
+      hint: '拖<b>板距 d</b>、拖<b>正对面积 S</b>，或点<b>电介质</b>换材料：看 C 怎么变。',
+      note: '教材结论句：<b>"减小正对面积、增大极板间距离都能减小平行板电容器的电容；插入电介质却会增大电容。"</b><br>' +
+        '理论式：<b>C = εrS/(4πkd)</b>（k 为静电力常量，εr 为相对介电常数）。<br>' +
+        '两点诚实提醒：① 这是"拓展学习"，<b>不是基本教学要求</b>；② 教材静电计路线的大平行板只有<b>几十 pF</b>，普通电容挡够不着，课堂要改用"叠层式装置"（0.6–2.8 µF）。<br>' +
+        '另外：板间中部约 6.25×10⁴ V/m、边缘降到 0.66×10⁴ V/m —— <b>匀强电场是理想模型</b>。',
+      formula: 'C = εrS / (4πkd)　（真空/空气 εr = 1）',
+      init: function (st) { st.d = 0.004; st.S = 1; st.er = 1; }
+    }),
+
+    /* ---------------- 第六幕 · 收束（环节⑦） ---------------- */
+    mk(A6, '练习与应用：四图判误、定义式计算、除颤器', {
+      scene: 'practice',
+      allow: { prac: true, graph: true, U: true },
+      show: {},
+      hint: '点<b>题目</b>切换四道题；第2题点<b>图 A / B / C / D</b> 选错图；第3、4题拖<b>电压 U</b> 看 Q 怎么跟着变。',
+      note: '第2题判据（本节最硬的一句）：<b>电容器的电容大小由电容器本身的性质决定，与电压和其所带电荷量无关</b> —— 所以"C 随 Q 增大"那张图是错的。<br>' +
+        '第3题：C = 4.5×10⁻⁴/3 = 1.5×10⁻⁴ F；电压降为 2 V 时 <b>C 不变</b>，Q′ = CU′ = 3.0×10⁻⁴ C。<br>' +
+        '第4题：除颤器 Q = CU = 15 µF × 9.0 kV = <b>0.135 C</b>（教参按 4.0 kV 得 6.0×10⁻² C，课堂按教材题干的 9.0 kV 作答）。',
+      formula: 'C = Q/U　⇒　U 变时 C 不变、Q = CU 跟着变',
+      init: function (st) { st.prac = 'graphs'; st.graph = ''; st.U = 1.6; }
+    }),
+    mk(A6, '三句话带走', {
+      scene: 'text',
+      allow: {},
+      lines: [
+        { t: '① 模型：电容器 ＝ 两个极板 ＋ 电介质', c: '#FFFFFF', size: 20 },
+        { t: '（任何两个彼此绝缘又相距很近的导体，都可以看成一个电容器）', c: '#888888', size: 14 },
+        { t: '② 过程：充电 U 升而 I 降（反步调）；I-t 曲线下的面积 ＝ 电荷量 Q', c: '#FFFFFF', size: 19 },
+        { t: '③ 概念：C ＝ Q/U 是电容器自己的属性，与 U、Q 无关', c: '#FFFF00', size: 20 },
+        { t: 'E = F/q　φ = Ep/q　U = W/q　—— 前三次比"场"，这一次比"元件"', c: '#888888', size: 14 }
+      ],
+      hint: '这一屏不用拖：把三句话念一遍，再回去看第 2 步拆开的那只电容器。',
+      note: '两个睡前自查：① "电容器不带电时，它的电容是多少？"（答：<b>不变</b>，C 由电容器本身决定）；② "为什么外壳上标的是额定电压而不是击穿电压？"',
+      formula: '电容器是装电荷的容器；C = Q/U 量的是这个容器自己的"容量"。'
+    })
+  ];
+
+  /* ---------- 应用一个步骤（纯函数式重建） ---------- */
+  function apply(st, i) {
+    i = clamp(i, 0, STEPS.length - 1);
+    var fresh = baseState(), k;
+    for (k in fresh) { st[k] = fresh[k]; }
+    var def = STEPS[i];
+    st.step = i;
+    st.act = def.act; st.title = def.title; st.hint = def.hint || '';
+    st.note = def.note || ''; st.formula = def.formula || '';
+    st.scene = def.scene || 'model';
+    st.lines = def.lines || [];
+    st.allow = {};
+    for (k in (def.allow || {})) { st.allow[k] = true; }
+    if (def.init) { def.init(st); }
+    for (k in (def.show || {})) { st.show[k] = def.show[k]; }
+    /* 电容器档位 → 实际电容值 */
+    st.Cn = CAP_LIST[clamp(st.cap, 0, CAP_LIST.length - 1)].F;
+    /* 时刻 t 落在当前过程的观察窗口内 */
+    st.t = clamp(st.t, 0, P.DEMO_TSPAN);
+    st.Uv = clamp(st.Uv, 0, 80);
+    st.U = clamp(st.U, 0, 4);
+    st.theta = clamp(st.theta, 0, 180);
+    st.unfold = clamp(st.unfold, 0, 1);
+    st.h = clamp(st.h, 0.2, 2.0);
+    st.N = clamp(Math.round(st.N), 1, 40);
+    return st;
+  }
+
+  global.VizSteps = {
+    STEPS: STEPS, apply: apply, baseState: baseState, CAP_LIST: CAP_LIST
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* =====================================================================
+   viz_ca_app.js —— 交互层：翻页 / 拖动 / 滑块 / 读数 / 自检接口
+   翻页用 VizSteps.apply() 纯重建，所以"上一步"永远精确复原。
+   ===================================================================== */
+(function () {
+  'use strict';
+  var P = window.VizPhys, R = window.VizRender, St = window.VizSteps;
+
+  var cv = document.getElementById('cv');
+  var st = St.baseState();
+  var S = null;          // 上一帧的场景几何（命中测试用）
+  var drag = null;
+
+  function $(id) { return document.getElementById(id); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function show(el, on) { if (el) { el.classList[on ? 'remove' : 'add']('hidden'); } }
+
+  /* ================= 渲染 ================= */
+  function draw() {
+    S = R.render(cv, st).S;
+    updatePanel();
+    updateControls();
+    markToc();
+  }
+
+  /* ================= 读数面板 ================= */
+  function updatePanel() {
+    var sc = st.scene;
+    show($('gModel'), sc === 'model');
+    show($('gCircuit'), sc === 'circuit');
+    show($('gSharing'), sc === 'sharing');
+    show($('gQu'), sc === 'qu');
+    show($('gPlate'), sc === 'plate');
+    show($('gIt'), sc === 'itarea');
+    show($('gDefn'), sc === 'defn');
+    show($('gSafety'), sc === 'safety');
+    show($('gApps'), sc === 'apps');
+    show($('gPrac'), sc === 'practice');
+
+    if (sc === 'model') {
+      $('rdUnfold').textContent = Math.round(st.unfold * 100) + '%';
+      $('rdMd').textContent = (st.d * 1000).toFixed(0) + ' mm';
+      $('rdMC').textContent = R.cfmt(P.plateC(0.02, st.d, st.er));
+    } else if (sc === 'circuit') {
+      var D = P.demoState(st.sw, st.t, st.U0, P.DEMO_C, P.DEMO_R,
+        st.vm === 'student' ? P.DEMO_RV_STUDENT : P.DEMO_RV_DIGITAL);
+      $('rdSw').textContent = st.sw === 1 ? '接 1（充电）' : st.sw === 2 ? '接 2（放电）' : '断开';
+      $('rdT').textContent = st.t.toFixed(2) + ' s';
+      $('rdU').textContent = R.ufmt(D.U);
+      $('rdI').textContent = R.ifmt(D.I);
+      $('rdQ').textContent = R.qfmt(D.Q);
+      $('rdTau').textContent = (D.tau >= 1000 ? (D.tau / 3600).toFixed(1) + ' h' : D.tau.toFixed(2) + ' s');
+      $('rdIg').textContent = D.overRange ? '超出 ±300 µA' : '在 ±300 µA 内';
+      $('rdIg').className = D.overRange ? 'yellow' : '';
+      $('rdVm').textContent = st.vm === 'digital' ? '数字表 100 MΩ' : '学生表 3 kΩ';
+    } else if (sc === 'sharing') {
+      var Q0 = P.SHARE_C * P.SHARE_U0, qa = P.shareQ(Q0, st.n);
+      var qb = (st.s1 === 2 && st.bCharged) ? qa : 0;
+      var U2 = qa / P.SHARE_C;
+      $('rdN').textContent = st.n + ' 次';
+      $('rdQa').textContent = st.n === 0 ? 'Q' : 'Q/' + Math.pow(2, st.n);
+      $('rdQa2').textContent = R.qfmt(qa);
+      $('rdQb2').textContent = R.qfmt(qb);
+      $('rdUs').textContent = U2.toFixed(3) + ' V';
+      $('rdQu').textContent = R.cfmt(qa / U2);
+    } else if (sc === 'qu') {
+      var C = st.Cn;
+      $('rdCap').textContent = St.CAP_LIST[st.cap].n;
+      $('rdQu2').textContent = st.U.toFixed(2) + ' V';
+      $('rdQq').textContent = R.qfmt(C * st.U);
+      $('rdSlope').textContent = R.cfmt(C);
+    } else if (sc === 'plate') {
+      var Cp = P.plateC(P.discArea(0.16) * st.S, st.d, st.er);
+      $('rdPd').textContent = (st.d * 1000).toFixed(1) + ' mm';
+      $('rdPs').textContent = Math.round(st.S * 100) + '%（Ø16 cm）';
+      $('rdPe').textContent = st.er.toFixed(1);
+      $('rdPc').textContent = R.cfmt(Cp);
+      $('rdPbig').textContent = R.cfmt(P.plateC(P.discArea(P.BIGPLATE_DIA), P.BIGPLATE_D1, 1)) +
+        ' – ' + R.cfmt(P.plateC(P.discArea(P.BIGPLATE_DIA), P.BIGPLATE_D0, 1));
+    } else if (sc === 'itarea') {
+      var tau = P.SEN_R * P.SEN_C, fI = function (t) { return P.SEN_U0 / P.SEN_R * Math.exp(-t / tau); };
+      var sum = P.riemann(fI, 0, P.SEN_TSPAN, st.N, st.mode);
+      var exact = P.SEN_U0 * P.SEN_C;
+      $('rdItN').textContent = st.N + ' 段';
+      $('rdItMode').textContent = st.mode === 'left' ? '左端点' : st.mode === 'right' ? '右端点' : '中点';
+      $('rdItSum').textContent = R.qfmt(sum);
+      $('rdItExact').textContent = R.qfmt(exact);
+      $('rdItErr').textContent = ((sum - exact) / exact * 100).toFixed(2) + '%';
+    } else if (sc === 'defn') {
+      $('rdDh').textContent = st.h.toFixed(2) + (st.show.table ? ' V' : ' 格');
+      $('rdDw').textContent = '1 ：1.43 ：2（底面积比）';
+      $('rdDc').textContent = st.vote === 'QU' ? '选了 Q/U' : st.vote === 'UQ' ? '选了 U/Q' : '未投票';
+    } else if (sc === 'safety') {
+      $('rdSv').textContent = st.Uv.toFixed(0) + ' V';
+      var stt = P.voltageStatus(st.Uv);
+      $('rdSs').textContent = stt === 'safe' ? '安全' : stt === 'rated' ? '超额定（未击穿）' : '击穿损坏';
+      $('rdSs').className = stt === 'safe' ? 'green' : stt === 'rated' ? 'yellow' : 'pos';
+      $('rdSr').textContent = P.RATED_U + ' V';
+      $('rdSb').textContent = P.BREAK_U + ' V';
+    } else if (sc === 'apps') {
+      $('rdAt').textContent = st.theta.toFixed(0) + '°';
+      $('rdAs').textContent = Math.round(P.varArea(0.004, st.theta) / 0.004 * 100) + '%';
+      $('rdAc').textContent = R.cfmt(P.varCap(0.004, st.theta, 0.001, 1));
+    } else if (sc === 'practice') {
+      var names = { table: '第 1 题 · 充放电表格', graphs: '第 2 题 · 四图判误', calc: '第 3 题 · 定义式计算', defib: '第 4 题 · 心脏除颤器' };
+      $('rdPr').textContent = names[st.prac] || '—';
+      if (st.prac === 'calc') {
+        $('rdPv').textContent = st.U.toFixed(2) + ' V';
+        $('rdPc2').textContent = R.cfmt(P.pr3C());
+        $('rdPq').textContent = R.qfmt(P.pr3C() * st.U);
+      } else if (st.prac === 'defib') {
+        $('rdPv').textContent = st.U.toFixed(1) + ' kV';
+        $('rdPc2').textContent = R.cfmt(P.P4_C);
+        $('rdPq').textContent = R.qfmt(P.pr4Q(st.U * 1000));
+      } else if (st.prac === 'graphs') {
+        $('rdPv').textContent = st.graph === '' ? '未选' : '图 ' + st.graph;
+        $('rdPc2').textContent = 'C 不变';
+        $('rdPq').textContent = 'Q ∝ U';
+      } else {
+        $('rdPv').textContent = st.pick === 't1' ? 't₁' : 't₂';
+        $('rdPc2').textContent = '电流减小';
+        $('rdPq').textContent = st.pick === 't1' ? '放电·接 2' : '充电·接 1';
+      }
+    }
+    $('rdFormula').innerHTML = st.formula || '—';
+    $('rdNote').innerHTML = st.note || '—';
+  }
+
+  /* ================= 控件状态 ================= */
+  function updateControls() {
+    var a = st.allow;
+    show($('wrapUnfold'), !!a.unfold);
+    show($('wrapD'), !!a.d);
+    show($('wrapS'), !!a.S);
+    show($('wrapER'), !!a.er);
+    show($('wrapTheta'), !!a.theta);
+    show($('wrapSw'), !!a.sw);
+    show($('wrapT'), !!a.t);
+    show($('wrapU0'), !!a.U0);
+    show($('wrapVM'), !!a.vm);
+    show($('wrapOp'), !!a.op);
+    show($('wrapCap'), !!a.cap);
+    show($('wrapU'), !!a.U);
+    show($('wrapN'), !!a.N);
+    show($('wrapMode'), !!a.mode);
+    show($('wrapVote'), !!a.vote);
+    show($('wrapH'), !!a.h);
+    show($('wrapUv'), !!a.Uv);
+    show($('wrapPrac'), !!a.prac);
+    show($('wrapPick'), !!a.pick);
+    show($('wrapGraph'), !!a.graph);
+
+    $('stepTitle').textContent = st.title;
+    $('actTag').textContent = st.act;
+    $('stepSn').textContent = (st.step + 1) + ' / ' + St.STEPS.length;
+    $('hint').innerHTML = st.hint || '';
+    $('prog').firstElementChild.style.width = ((st.step + 1) / St.STEPS.length * 100) + '%';
+
+    /* 滑块（范围随场景切换） */
+    $('rgUnfold').value = Math.round(st.unfold * 100);
+    $('lbUnfold').textContent = Math.round(st.unfold * 100) + '%';
+    var isPlate = (st.scene === 'plate');
+    $('rgD').min = isPlate ? 1 : 1;
+    $('rgD').max = isPlate ? 10 : 20;
+    $('rgD').step = isPlate ? 0.5 : 1;
+    $('rgD').value = st.d * 1000;
+    $('lbD').textContent = (st.d * 1000).toFixed(isPlate ? 1 : 0) + ' mm';
+    $('rgS').value = Math.round(st.S * 100);
+    $('lbS').textContent = Math.round(st.S * 100) + '%';
+    $('rgTheta').value = Math.round(st.theta);
+    $('lbTheta').textContent = Math.round(st.theta) + '°';
+    $('rgT').value = Math.round(st.t * 100);
+    $('lbT').textContent = st.t.toFixed(2) + ' s';
+    $('rgU0').value = st.U0;
+    $('lbU0').textContent = st.U0.toFixed(1) + ' V';
+    var uMin = 0, uMax = 3, uStep = 0.05, uVal = st.U, uTxt = st.U.toFixed(2) + ' V';
+    if (st.scene === 'practice' && st.prac === 'calc') { uMax = 5; }
+    if (st.scene === 'practice' && st.prac === 'defib') { uMin = 0.5; uMax = 9; uStep = 0.1; uTxt = st.U.toFixed(1) + ' kV'; }
+    $('rgU').min = uMin; $('rgU').max = uMax; $('rgU').step = uStep; $('rgU').value = uVal;
+    $('lbU').textContent = uTxt;
+    $('rgN').value = st.N; $('lbN').textContent = st.N + ' 段';
+    $('rgH').value = Math.round(st.h * 100); $('lbH').textContent = st.h.toFixed(2);
+    $('rgUv').value = st.Uv; $('lbUv').textContent = st.Uv.toFixed(0) + ' V';
+
+    var i, list;
+    list = document.querySelectorAll('#wrapSw button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (parseInt(list[i].getAttribute('data-sw'), 10) === st.sw) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapVM button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (list[i].getAttribute('data-vm') === st.vm) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapER button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (Math.abs(parseFloat(list[i].getAttribute('data-er')) - st.er) < 1e-9) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapCap button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (parseInt(list[i].getAttribute('data-cap'), 10) === st.cap) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapMode button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (list[i].getAttribute('data-mode') === st.mode) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapVote button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (list[i].getAttribute('data-vote') === st.vote) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapPrac button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (list[i].getAttribute('data-prac') === st.prac) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapPick button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (list[i].getAttribute('data-pick') === st.pick) ? 'on' : '';
+    }
+    list = document.querySelectorAll('#wrapGraph button');
+    for (i = 0; i < list.length; i++) {
+      list[i].className = (list[i].getAttribute('data-graph') === st.graph) ? 'on' : '';
+    }
+  }
+
+  /* ================= 翻页 ================= */
+  function go(i) {
+    St.apply(st, i);
+    draw();
+    if (window.requestAnimationFrame) { window.requestAnimationFrame(draw); }
+  }
+  function next() { go(st.step + 1); }
+  function prev() { go(st.step - 1); }
+  function resetStep() { go(st.step); }
+
+  $('btnNext').addEventListener('click', next);
+  $('btnPrev').addEventListener('click', prev);
+  $('btnReset').addEventListener('click', resetStep);
+  $('prog').addEventListener('click', function (ev) {
+    var r = this.getBoundingClientRect();
+    var f = clamp((ev.clientX - r.left) / r.width, 0, 0.999);
+    go(Math.floor(f * St.STEPS.length));
+  });
+  (function ticks() {
+    var bar = $('prog');
+    for (var i = 1; i < St.STEPS.length; i++) {
+      var u = document.createElement('u');
+      u.style.left = (i / St.STEPS.length * 100) + '%';
+      bar.appendChild(u);
+    }
+  })();
+
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'ArrowRight' || ev.key === 'PageDown' || ev.key === ' ') { next(); ev.preventDefault(); }
+    else if (ev.key === 'ArrowLeft' || ev.key === 'PageUp') { prev(); ev.preventDefault(); }
+    else if (ev.key === 'Home') { go(0); ev.preventDefault(); }
+  });
+
+  /* ================= 滑块与按钮 ================= */
+  $('rgUnfold').addEventListener('input', function () { st.unfold = parseFloat(this.value) / 100; draw(); });
+  $('rgD').addEventListener('input', function () { st.d = parseFloat(this.value) / 1000; draw(); });
+  $('rgS').addEventListener('input', function () { st.S = parseFloat(this.value) / 100; draw(); });
+  $('rgTheta').addEventListener('input', function () { st.theta = parseFloat(this.value); draw(); });
+  $('rgT').addEventListener('input', function () { st.t = parseFloat(this.value) / 100; draw(); });
+  $('rgU0').addEventListener('input', function () { st.U0 = parseFloat(this.value); draw(); });
+  $('rgU').addEventListener('input', function () { st.U = parseFloat(this.value); draw(); });
+  $('rgN').addEventListener('input', function () { st.N = parseInt(this.value, 10); draw(); });
+  $('rgH').addEventListener('input', function () { st.h = parseFloat(this.value) / 100; draw(); });
+  $('rgUv').addEventListener('input', function () { st.Uv = parseFloat(this.value); draw(); });
+
+  function eachButton(sel, fn) {
+    var list = document.querySelectorAll(sel);
+    for (var i = 0; i < list.length; i++) { list[i].addEventListener('click', fn); }
+  }
+  eachButton('#wrapSw button', function () {
+    st.sw = parseInt(this.getAttribute('data-sw'), 10); st.t = 0; draw();
+  });
+  eachButton('#wrapVM button', function () { st.vm = this.getAttribute('data-vm'); draw(); });
+  eachButton('#wrapER button', function () { st.er = parseFloat(this.getAttribute('data-er')); draw(); });
+  eachButton('#wrapCap button', function () { st.cap = parseInt(this.getAttribute('data-cap'), 10); draw(); });
+  eachButton('#wrapMode button', function () { st.mode = this.getAttribute('data-mode'); draw(); });
+  eachButton('#wrapVote button', function () { st.vote = this.getAttribute('data-vote'); draw(); });
+  eachButton('#wrapPrac button', function () {
+    st.prac = this.getAttribute('data-prac');
+    if (st.prac === 'calc') { st.U = 1.6; }
+    if (st.prac === 'defib') { st.U = 9.0; }
+    if (st.prac === 'table') { st.sw = st.pick === 't1' ? 2 : 1; }
+    draw();
+  });
+  eachButton('#wrapPick button', function () {
+    st.pick = this.getAttribute('data-pick');
+    st.sw = (st.pick === 't1') ? 2 : 1;
+    draw();
+  });
+  eachButton('#wrapGraph button', function () { st.graph = this.getAttribute('data-graph'); draw(); });
+  eachButton('#wrapOp button', function () {
+    var op = this.getAttribute('data-op');
+    if (op === 'charge') { st.n = 0; st.s1 = 1; st.s2 = true; st.bCharged = false; }
+    else if (op === 'share') {
+      if (st.s1 !== 2 && !st.bCharged && st.n < 4) { st.n += 1; st.bCharged = true; }
+      st.s1 = 2;
+      if (!st.bCharged) { st.bCharged = true; }
+      st.s2 = false;
+    } else if (op === 'disb') { st.s1 = 0; st.s2 = true; st.bCharged = false; }
+    draw();
+  });
+
+  /* ================= 拖动 ================= */
+  function evPos(ev) {
+    var r = cv.getBoundingClientRect();
+    var t = ev.touches ? ev.touches[0] : ev;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  }
+  function hitBox(p) {
+    if (!S || !S.hits) { return null; }
+    for (var i = S.hits.length - 1; i >= 0; i--) {
+      var h = S.hits[i];
+      if (p.x >= h.x && p.x <= h.x + h.w && p.y >= h.y && p.y <= h.y + h.h) { return h.id; }
+    }
+    return null;
+  }
+  function applyDrag(id, p) {
+    if (S && S.dragHandlers && S.dragHandlers[id]) { S.dragHandlers[id](st, p.x, p.y); return true; }
+    if (id === 'time') { st.t = clamp(S.stripInvU(p.x), 0, 1) * P.DEMO_TSPAN; return true; }
+    return false;
+  }
+
+  function onDown(ev) {
+    var p = evPos(ev);
+    var id = hitBox(p);
+    if (id === 'voteQU' || id === 'voteUQ') { st.vote = id === 'voteQU' ? 'QU' : 'UQ'; draw(); ev.preventDefault(); return; }
+    if (id && id.indexOf('graph') === 0) { st.graph = id.slice(5); draw(); ev.preventDefault(); return; }
+    if (id === 'sw0' || id === 'sw1' || id === 'sw2') {
+      st.sw = parseInt(id.slice(2), 10); st.t = 0; draw(); ev.preventDefault(); return;
+    }
+    if (id && S && S.dragHandlers && S.dragHandlers[id]) {
+      drag = { mode: id };
+      if (applyDrag(id, p)) { draw(); }
+      cv.style.cursor = 'grabbing';
+      ev.preventDefault();
+      return;
+    }
+    /* 条带里拖时间（充放电过程） */
+    if (S && S.hasStrip && st.scene === 'circuit' && st.allow.t && p.y > S.stripTop - 6) {
+      drag = { mode: 'time' };
+      applyDrag('time', p);
+      draw();
+      ev.preventDefault();
+    }
+  }
+
+  function onMove(ev) {
+    var p = evPos(ev);
+    if (!drag) {
+      var id = hitBox(p);
+      var can = (id && S && S.dragHandlers && S.dragHandlers[id]);
+      if (!can && S && S.hasStrip && st.scene === 'circuit' && st.allow.t && p.y > S.stripTop - 6) { can = true; }
+      cv.style.cursor = can ? 'grab' : (id ? 'pointer' : 'default');
+      return;
+    }
+    if (applyDrag(drag.mode, p)) { draw(); }
+    ev.preventDefault();
+  }
+  function onUp() { if (drag) { drag = null; cv.style.cursor = 'default'; } }
+
+  cv.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
+  cv.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  cv.addEventListener('touchstart', onDown, { passive: false });
+  cv.addEventListener('touchmove', onMove, { passive: false });
+  window.addEventListener('touchend', onUp);
+  cv.addEventListener('dblclick', function () { resetStep(); });
+
+  var rzT = null;
+  window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(draw, 120); });
+
+  /* ================= 顶部步骤导航条 ================= */
+  var tocEl = $('toc'), tocLinks = [], tocMarked = -1;
+  (function buildToc() {
+    if (!tocEl) { return; }
+    var curAct = null;
+    for (var i = 0; i < St.STEPS.length; i++) {
+      var def = St.STEPS[i];
+      if (def.act !== curAct) {
+        if (curAct !== null) {
+          var sp = document.createElement('span'); sp.className = 'sep'; tocEl.appendChild(sp);
+        }
+        curAct = def.act;
+        var lab = document.createElement('span');
+        lab.className = 'grouplab';
+        lab.textContent = String(def.act).split('·')[0].trim();
+        lab.title = def.act;
+        tocEl.appendChild(lab);
+      }
+      var a = document.createElement('a');
+      a.title = (i + 1) + '. ' + def.title;
+      a.textContent = String(i + 1);
+      (function (idx, node) { node.addEventListener('click', function () { go(idx); }); })(i, a);
+      tocEl.appendChild(a);
+      tocLinks.push(a);
+    }
+  })();
+  function markToc() {
+    if (!tocLinks.length || tocMarked === st.step) { return; }
+    tocMarked = st.step;
+    for (var i = 0; i < tocLinks.length; i++) {
+      var on = (i === st.step);
+      tocLinks[i].className = on ? 'on' : '';
+      if (on && tocLinks[i].scrollIntoView) { tocLinks[i].scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+    }
+  }
+
+  /* ================= 自检 / 调试接口 ================= */
+  function hash() {
+    var f = R.fitCanvas(cv);
+    var W = Math.floor(f.W), H = Math.floor(f.H);
+    var d = f.ctx.getImageData(0, 0, W, H).data;
+    var h = 2166136261 >>> 0;
+    for (var i = 0; i < d.length; i += 61) { h ^= d[i]; h = (h * 16777619) >>> 0; }
+    return ('00000000' + h.toString(16)).slice(-8);
+  }
+
+  /**
+   * 本课物理专项验证（页面里跑，报出用例数与最大误差）
+   *   ① C = Q/U 与 U、Q 无关　② 平分电荷（含官方数据表）　③ RC 充放电与反步调
+   *   ④ I-t 面积三种取点　⑤ 平行板 S／d／εr　⑥ 教材练习 3、4　⑦ 耐压三档
+   */
+  function verifyCA() {
+    var worst = 0, cases = 0, bad = [];
+    function chk(a, b, tag, tol) {
+      cases++;
+      var e = Math.abs(a - b);
+      if (e > worst) { worst = e; }
+      var t = (tol === undefined) ? 1e-9 : tol;
+      if (!(e <= t)) { bad.push(tag + ' err=' + e); }
+    }
+    var i, j;
+    var Cs = [P.pF(47), P.uF(200), P.uF(1000), P.uF(2200), P.pr3C()];
+    var Us = [0.25, 0.5, 1, 1.5, 2, 3, 8, 9.0e3];
+    for (i = 0; i < Cs.length; i++) {
+      for (j = 0; j < Us.length; j++) {
+        var C = Cs[i], U = Us[j], Q = P.capQ(C, U);
+        chk(P.capC(Q, U), C, '①C = Q/U', 1e-18);
+        chk(P.capU(C, Q), U, '①U = Q/C', 1e-12);
+        chk(P.capC(Q, U), P.capC(P.capQ(C, 2 * U), 2 * U), '①C 与 U 无关');
+      }
+    }
+    var Q0 = P.SHARE_C * P.SHARE_U0;
+    for (i = 0; i <= 4; i++) {
+      chk(P.shareQ(Q0, i), Q0 / Math.pow(2, i), '②Q/2ⁿ', 1e-18);
+      chk(P.shareU(P.SHARE_C, Q0, i), P.SHARE_U0 / Math.pow(2, i), '②U 减半', 1e-12);
+      chk(Math.abs(P.measC(i) - P.SHARE_C) / P.SHARE_C, 0, '②官方数据表反算 C', 0.03);
+    }
+    for (i = 0; i < 4; i++) { chk(P.measRatio(i) / 2, 1, '②相邻电压比 ≈ 2（相对误差）', 0.055); }
+    var tau = P.rcTau(P.DEMO_R, P.DEMO_C);
+    chk(tau, 1.1, '③τ = 1.1 s', 1e-12);
+    chk(P.chargeU(P.DEMO_U0, tau, tau) / P.DEMO_U0, 0.63212, '③充电 τ 到 63.2%', 1e-4);
+    chk(P.chargeI(P.DEMO_U0, P.DEMO_R, 0, tau), P.DEMO_U0 / P.DEMO_R, '③I₀ = U₀/R', 1e-15);
+    var pU = -1, pI = Infinity;
+    for (i = 0; i <= 24; i++) {
+      var tt = i * tau / 6;
+      var uu = P.chargeU(P.DEMO_U0, tt, tau), ii = P.chargeI(P.DEMO_U0, P.DEMO_R, tt, tau);
+      cases += 2;
+      if (!(uu >= pU - 1e-15)) { bad.push('③U 非单调增 t=' + tt); }
+      if (!(ii <= pI + 1e-15)) { bad.push('③I 非单调减 t=' + tt); }
+      pU = uu; pI = ii;
+    }
+    var fI = function (t) { return P.SEN_U0 / P.SEN_R * Math.exp(-t / (P.SEN_R * P.SEN_C)); };
+    var exact = P.SEN_U0 * P.SEN_C;
+    var sumL = P.riemann(fI, 0, 10 * P.SEN_R * P.SEN_C, 60, 'left');
+    var sumR = P.riemann(fI, 0, 10 * P.SEN_R * P.SEN_C, 60, 'right');
+    var sumM = P.riemann(fI, 0, 10 * P.SEN_R * P.SEN_C, 60, 'mid');
+    chk(sumL > exact ? 0 : 1, 0, '④左端点高估', 0);
+    chk(sumR < exact ? 0 : 1, 0, '④右端点低估', 0);
+    chk(Math.abs(sumM - exact) / exact, 0, '④中点接近真实值', 0.01);
+    var areas = [10, 20, 40, 80];
+    var prevErr = Infinity;
+    for (i = 0; i < areas.length; i++) {
+      var er = Math.abs(P.riemann(fI, 0, P.SEN_TSPAN, areas[i], 'mid') - exact);
+      cases++;
+      if (!(er <= prevErr + 1e-18)) { bad.push('④N 增大误差不降 N=' + areas[i]); }
+      prevErr = er;
+    }
+    for (i = 0; i < P.ER_LIST.length; i++) {
+      var e = P.ER_LIST[i].v;
+      chk(P.plateC(0.02, 0.002, e), P.plateCeps(0.02, 0.002, e), '⑤两种写法一致', 1e-24);
+      chk(P.plateC(0.04, 0.002, e), 2 * P.plateC(0.02, 0.002, e), '⑤S 加倍', 1e-24);
+      chk(P.plateC(0.02, 0.004, e), P.plateC(0.02, 0.002, e) / 2, '⑤d 加倍', 1e-24);
+      chk(P.plateC(0.02, 0.002, e) / P.plateC(0.02, 0.002, 1), e, '⑤×εr', 1e-12);
+    }
+    for (i = 0; i <= 12; i++) {
+      var th = i * 15;
+      chk(P.varArea(0.004, th), 0.004 * (1 - th / 180), '⑤可变电容器正对面积', 1e-15);
+    }
+    chk(P.pr3C(), 1.5e-4, '⑥第3题 C', 1e-18);
+    chk(P.pr3Q2(), 3.0e-4, '⑥第3题 Q′', 1e-18);
+    chk(P.pr4Q(9.0e3), 0.135, '⑥第4题 Q（9.0 kV）', 1e-15);
+    chk(P.pr4Q(4.0e3), 6.0e-2, '⑥第4题 Q（4.0 kV）', 1e-15);
+    chk(P.voltageStatus(40) === 'safe' ? 0 : 1, 0, '⑦40 V 安全', 0);
+    chk(P.voltageStatus(55) === 'rated' ? 0 : 1, 0, '⑦55 V 超额定', 0);
+    chk(P.voltageStatus(65) === 'break' ? 0 : 1, 0, '⑦65 V 击穿', 0);
+    var sD = P.demoState(2, 0, P.DEMO_U0, P.DEMO_C, P.DEMO_R, P.DEMO_RV_DIGITAL);
+    chk(sD.I < 0 ? 0 : 1, 0, '⑦放电电流反向', 0);
+    chk(sD.U, P.DEMO_U0, '⑦放电起点为满电压', 1e-15);
+    return { ok: bad.length === 0, cases: cases, maxErr: worst, failed: bad.slice(0, 3) };
+  }
+
+  window.__viz = {
+    state: st,
+    count: St.STEPS.length,
+    go: go, next: next, prev: prev, reset: resetStep, draw: draw,
+    hash: hash,
+    getS: function () { return S; },
+    render: R, phys: P, steps: St,
+    verifyCA: verifyCA,
+    selfTest: function () { return P.runSelfTest(); },
+    stepMeta: function () {
+      return St.STEPS.map(function (d, i) {
+        return { i: i, act: d.act, title: d.title, scene: d.scene, allow: Object.keys(d.allow || {}), hint: d.hint || '' };
+      });
+    }
+  };
+
+  /* ================= 启动 ================= */
+  St.apply(st, 0);
+  draw();
+  setTimeout(draw, 60);
+})();
+
+</script>
+</body>
+</html>
